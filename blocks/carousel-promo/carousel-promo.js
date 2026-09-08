@@ -82,6 +82,34 @@ function createSlide(row, slideIndex, carouselId) {
     slide.append(column);
   });
 
+  // Classify CTAs and, for promo cards, reorder to match the source layout
+  // (eyebrow -> title -> tertiary CTA -> image -> filled pill at the bottom).
+  const content = slide.querySelector('.carousel-promo-slide-content');
+  const image = slide.querySelector('.carousel-promo-slide-image');
+  if (content) {
+    const ctas = [...content.querySelectorAll(':scope > p')].filter((p) => p.querySelector('a'));
+    const headingFirst = content.firstElementChild
+      && /^H[1-6]$/.test(content.firstElementChild.tagName);
+    ctas.forEach((p) => p.classList.add('carousel-promo-cta'));
+
+    // Promo card = eyebrow-led with two CTAs: the last CTA is a filled pill that
+    // sits below the image; the course card is heading-led with a single tertiary
+    // text link and keeps its image on top.
+    if (!headingFirst && ctas.length >= 2) {
+      slide.classList.add('carousel-promo-slide-promo');
+      const primary = ctas[ctas.length - 1];
+      primary.classList.add('carousel-promo-cta-primary');
+      if (image) slide.append(image); // move image below the text content
+      slide.append(primary); // move the filled pill to the bottom of the card
+    }
+
+    ctas.forEach((p) => {
+      if (!p.classList.contains('carousel-promo-cta-primary')) {
+        p.classList.add('carousel-promo-cta-tertiary');
+      }
+    });
+  }
+
   const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
   if (labeledBy) {
     slide.setAttribute('aria-labelledby', labeledBy.getAttribute('id'));

@@ -1,27 +1,154 @@
-.cards-overlay > ul {
-  list-style: none;
+/* Block: cards-overlay -- navigational photo cards with gradient overlay.
+ * Values extracted from source computed styles (dentsplysirona.com .imagetile).
+ *
+ * Structure: the section (.cards-overlay-container) holds a heading
+ * (.default-content-wrapper) plus N sibling .cards-overlay-wrapper blocks.
+ * The section becomes the responsive grid; each block is one card.
+ */
+
+/* --- Section-level grid across the sibling card blocks ---
+ * The section keeps its full-width (dark) background; content is centered
+ * up to 1320px via inline padding. Higher specificity than main .section.dark. */
+main .section.cards-overlay-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--grid-gap);
+  padding-top: 64px;
+  padding-bottom: 64px;
+  padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
+}
+
+/* Heading spans the full grid width. Source gap heading->grid is 60px;
+ * the 24px grid gap plus 36px bottom margin yields that spacing. */
+main .section.cards-overlay-container > .default-content-wrapper {
+  grid-column: 1 / -1;
+  max-width: none;
+  margin: 0 0 36px;
+  padding: 0;
+}
+
+/* Each card block wrapper is a grid cell */
+main .section.cards-overlay-container > .cards-overlay-wrapper {
+  max-width: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
-  gap: 24px;
 }
 
-.cards-overlay > ul > li {
-  border: 1px solid #dadada;
-  background-color: var(--background-color);
+/* --- The card --- */
+.cards-overlay .cards-overlay-card {
+  position: relative;
+  display: block;
+  border: 1px solid rgb(163 178 193);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  aspect-ratio: 424 / 504;
 }
 
-.cards-overlay .cards-overlay-card-body {
-  margin: 16px;
-}
-
-.cards-overlay .cards-overlay-card-image {
+/* --- Image fills the card --- */
+.cards-overlay .cards-overlay-image {
+  position: absolute;
+  inset: 0;
   line-height: 0;
 }
 
-.cards-overlay > ul > li img {
+.cards-overlay .cards-overlay-image picture,
+.cards-overlay .cards-overlay-image img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
+}
+
+.cards-overlay .cards-overlay-image img {
   object-fit: cover;
+}
+
+/* --- Dark gradient overlay for legibility --- */
+.cards-overlay .cards-overlay-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: linear-gradient(
+    rgb(0 0 0 / 0%) 0.02%,
+    rgb(0 0 0 / 20%) 44%,
+    rgb(0 0 0) 99.98%
+  );
+  pointer-events: none;
+}
+
+/* --- Overlaid content (title + CTA), bottom-anchored --- */
+.cards-overlay .cards-overlay-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.cards-overlay .cards-overlay-content h1,
+.cards-overlay .cards-overlay-content h2,
+.cards-overlay .cards-overlay-content h3,
+.cards-overlay .cards-overlay-content h4,
+.cards-overlay .cards-overlay-content h5,
+.cards-overlay .cards-overlay-content h6 {
+  margin: 0;
+  color: rgb(255 255 255);
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-size-s);
+  font-weight: 600;
+  line-height: 33.6px;
+  letter-spacing: -0.7px;
+  text-align: center;
+}
+
+.cards-overlay .cards-overlay-content p {
+  margin: 0;
+}
+
+/* --- CTA link "Mehr anzeigen" --- */
+.cards-overlay .cards-overlay-content a.cards-overlay-cta:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 8px 4px;
+  border: 0;
+  background: none;
+  color: rgb(255 255 255);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.cards-overlay .cards-overlay-content a.cards-overlay-cta:any-link::after {
+  content: "\2192"; /* right arrow */
+  display: inline-block;
+}
+
+.cards-overlay .cards-overlay-content a.cards-overlay-cta:hover {
+  color: rgb(255 255 255);
+  text-decoration: none;
+}
+
+/* --- Responsive: tablet 2-up, desktop 3-up --- */
+@media (width >= 600px) {
+  main .section.cards-overlay-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  main .section.cards-overlay-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--grid-gap);
+    padding-inline: max(32px, calc((100% - var(--content-max-width)) / 2));
+  }
 }

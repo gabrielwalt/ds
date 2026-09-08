@@ -3,8 +3,9 @@
 /**
  * Parser for variant: cards-feature
  * Base block: cards
- * Source: https://www.dentsplysirona.com/de-ch
+ * Source: https://www.dentsplysirona.com/en-us
  * Instances: .teaser.basemarketingproperties, .iconcard
+ * Re-validated against en-us DOM: 2026-09-08
  * Generated: 2026-09-08
  *
  * The `cards` block table has 2 columns per card row:

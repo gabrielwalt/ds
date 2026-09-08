@@ -1,0 +1,97 @@
+/*
+ * brand.css — design tokens extracted from https://www.dentsplysirona.com/en-us
+ * Single source of truth for the Dentsply Sirona brand system. See
+ * migration-work/style-guide.md for the full analysis. Fonts loaded in head.html.
+ */
+:root {
+  /* ---- Font families ---- */
+  --heading-font-family: "Montserrat", montserrat-fallback, sans-serif;
+  --body-font-family: "Montserrat", montserrat-fallback, sans-serif;
+
+  /* ---- Core colors ---- */
+  --background-color: #fff;              /* white surfaces: buttons, header, dropdowns */
+  --page-bg: #fafafa;                    /* default page/body background (off-white) */
+  --text-color: rgb(8 10 12);            /* #080a0c */
+  --text-muted: rgb(72 89 107);          /* #48596b — body on light cards */
+  --link-color: rgb(8 10 12);
+  --link-hover-color: rgb(15 98 254);    /* brand blue */
+
+  /* ---- Brand palette ---- */
+  --brand-blue: rgb(15 98 254);          /* #0f62fe primary accent */
+  --brand-blue-hover: rgb(9 76 204);
+  --brand-chartreuse: rgb(207 234 0);    /* #cfea00 dark-card CTA accent */
+  --brand-arrow-blue: rgb(0 122 255);    /* carousel arrows */
+
+  /* ---- Section backgrounds ---- */
+  --section-dark-bg: rgb(51 63 76);      /* #333f4c */
+  --section-grey-bg: rgb(229 229 229); /* #e5e5e5 — measured on source §4 toolkit */
+  --section-grey-soft-bg: #eee;        /* measured on source §3 workflow features */
+  --section-blue-bg: rgb(15 98 254);
+  --section-light-text: rgb(250 250 250);
+  --section-muted-text: rgb(217 228 240); /* #d9e4f0 body on dark */
+
+  /* ---- Card surfaces ---- */
+  --card-bg-light: rgb(250 250 250);     /* #fafafa */
+  --card-border-light: rgb(225 229 234); /* #e1e5ea */
+  --card-bg-dark: rgb(41 51 61);         /* #29333d */
+  --card-border-dark: rgb(62 77 92);     /* #3e4d5c */
+
+  /* ---- Typography scale (desktop) ---- */
+  --heading-size-xxl: 69px;   /* h1 hero */
+  --heading-size-xl: 48px;    /* h2 section */
+  --heading-size-l: 48px;     /* h3 section */
+  --heading-size-m: 32px;     /* h4 */
+  --heading-size-s: 28px;     /* large card title */
+  --heading-size-xs: 23px;    /* card title h6 */
+  --heading-line-height: 1.2;
+  --heading-letter-spacing: -0.025em;
+  --heading-weight: 600;
+  --body-size: 16px;
+  --body-line-height: 1.5;
+  --body-letter-spacing: -0.01em;
+  --eyebrow-size: 16px;
+  --eyebrow-weight: 600;
+  --eyebrow-letter-spacing: 0.8px;
+
+  /* ---- Spacing & layout (unified section spacing model) ----
+   * Every content section uses the SAME vertical rhythm so sections with
+   * different backgrounds line up consistently:
+   *   --section-padding-block : top & bottom padding inside a section
+   *   --section-heading-gap   : gap between a section heading and its cards
+   *   --grid-gap              : gap between cards within a section
+   * Sections never carry a vertical margin (backgrounds touch edge-to-edge). */
+  --content-max-width: 1320px;
+  --section-padding-block: 64px;
+  --section-heading-gap: 40px;
+  --card-padding: 24px;
+  --grid-gap: 24px;
+  --nav-height: 72px;
+
+  /* ---- Corners ---- */
+  --radius-card: 24px;
+  --radius-panel: 16px;
+  --radius-image: 12px;
+  --radius-pill: 50px;
+
+  /* ---- Shadows ---- */
+  --shadow-card: rgb(0 0 0 / 10%) 0 4px 6px -1px, rgb(0 0 0 / 6%) 0 2px 4px -1px;
+
+  /* ---- Buttons ---- */
+  --button-radius: var(--radius-pill);
+  --button-padding: 8px 24px;
+  --button-font-size: 16px;
+  --button-font-weight: 600;
+
+  /* ---- Header / nav ---- */
+  --nav-link-color: rgb(51 63 76);
+  --nav-link-weight: 500;
+  --nav-login-bg: rgb(51 63 76);   /* dark slate pill */
+
+  /* ---- Footer ---- */
+  --footer-bg: rgb(25 30 36);      /* #191e24 near-black */
+  --footer-text: rgb(217 228 240); /* #d9e4f0 links/body */
+  --footer-heading: #fff;
+  --footer-accent: rgb(255 167 2); /* #ffa702 orange accent links */
+  --footer-muted: rgb(194 204 214); /* #c2ccd6 copyright */
+  --footer-divider: rgb(255 255 255 / 15%);
+}

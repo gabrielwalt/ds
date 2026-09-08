@@ -113,10 +113,18 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // load nav as fragment
+  // load nav as fragment. Prefer an explicit `nav` metadata path; otherwise try
+  // the local content fragment (/content/nav — where the imported fragment
+  // lives and is served on localhost) first, then the site-root /nav that DA/EDS
+  // publishes to. loadFragment returns null on a non-OK fetch, so the ?? chain
+  // falls through to the first path that resolves.
   const navMeta = getMetadata('nav');
-  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
-  const fragment = await loadFragment(navPath);
+  let fragment = null;
+  if (navMeta) {
+    fragment = await loadFragment(new URL(navMeta, window.location).pathname);
+  } else {
+    fragment = await loadFragment('/content/nav') || await loadFragment('/nav');
+  }
 
   // decorate nav DOM
   block.textContent = '';
@@ -140,13 +148,37 @@ export default async function decorate(block) {
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
-      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
+      // A top-level item is a mega-menu trigger when it wraps a panel <div>
+      // (the mega content). Mark it .nav-drop and tag the panel .nav-megamenu.
+      const panel = navSection.querySelector(':scope > div');
+      if (panel) {
+        navSection.classList.add('nav-drop');
+        panel.classList.add('nav-megamenu');
+        // Each direct child of the panel is a column/article; the Featured
+        // article (heading text "Featured") gets a dedicated class for styling.
+        panel.querySelectorAll(':scope > div').forEach((col) => {
+          col.classList.add('nav-mega-col');
+          const h = col.querySelector('h3');
+          if (h && /^featured$/i.test(h.textContent.trim())) col.classList.add('nav-mega-featured');
+        });
+      }
+      // Desktop: open on hover (source behaviour). Click still toggles for
+      // keyboard/touch. Hover handlers are attached after the grid is built.
       navSection.addEventListener('click', () => {
         if (isDesktop.matches) {
           const expanded = navSection.getAttribute('aria-expanded') === 'true';
           toggleAllNavSections(navSections);
           navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
         }
+      });
+      navSection.addEventListener('mouseenter', () => {
+        if (isDesktop.matches) {
+          toggleAllNavSections(navSections);
+          navSection.setAttribute('aria-expanded', 'true');
+        }
+      });
+      navSection.addEventListener('mouseleave', () => {
+        if (isDesktop.matches) navSection.setAttribute('aria-expanded', 'false');
       });
     });
   }

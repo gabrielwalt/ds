@@ -1,15 +1,24 @@
 {
   "status": "success",
-  "url": "https://www.dentsplysirona.com/de-ch",
+  "url": "https://www.dentsplysirona.com/en-us",
   "path": "index",
-  "timestamp": "2026-09-08T14:17:36.101Z",
-  "title": "Dentsply Sirona Schweiz: Dentalprodukte und -technologien | Dentsply Sirona CH",
+  "timestamp": "2026-09-08T21:37:38.704Z",
+  "title": "Dentsply Sirona USA: Dental products and technologies",
   "template": "home",
   "blocks": [
     "hero-home",
     "carousel-promo",
     "carousel-promo",
-    "carousel-promo",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
     "cards-feature",
     "cards-feature",
     "cards-feature",
@@ -29,6 +38,9 @@
     "cards-overlay",
     "cards-overlay",
     "cards-overlay",
-    "cards-overlay"
+    "cards-overlay",
+    "cards-quote",
+    "cards-quote",
+    "cards-quote"
   ]
 }

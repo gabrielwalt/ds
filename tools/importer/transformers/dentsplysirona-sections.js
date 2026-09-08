@@ -20,42 +20,51 @@ export default function transform(hookName, element, payload) {
   const sections = (payload.template && payload.template.sections) || [];
 
   if (hookName === 'beforeTransform') {
-    // Insert breaks now, before parsers can replace any section element.
-    for (let i = sections.length - 1; i >= 0; i -= 1) {
-      const section = sections[i];
-      if (i === 0 && !section.style) continue; // first section: no leading break, no metadata needed
-      const sectionEl = element.querySelector(section.selector);
-      if (!sectionEl) continue; // selector didn't match on this page — skip, never guess
-
-      const hr = document.createElement('hr');
-      if (section.style) hr.setAttribute(SECTION_MARKER_ATTR, section.id);
-      sectionEl.before(hr);
+    // Resolve each section element via its (position-sensitive) selector NOW,
+    // while the DOM still matches page-templates.json, and tag the element
+    // itself with a stable marker attribute. We must resolve every section
+    // BEFORE inserting any <hr>, because inserting breaks shifts the
+    // :nth-of-type() positions the selectors depend on — resolving lazily in a
+    // loop that also mutates the DOM would break later selectors (this was the
+    // en-us bug: after the first <hr>, section-4..8's nth-of-type selectors no
+    // longer matched). So: first pass resolves + tags, second pass inserts hrs.
+    const resolved = sections.map((section) => ({
+      section,
+      el: element.querySelector(section.selector),
+    }));
+    resolved.forEach(({ section, el }) => {
+      if (el) el.setAttribute(SECTION_MARKER_ATTR, section.id);
+    });
+    for (let i = resolved.length - 1; i >= 0; i -= 1) {
+      const { section, el } = resolved[i];
+      if (i === 0) continue; // first section: no leading break
+      if (!el) continue; // selector didn't match — skip, never guess
+      el.before(document.createElement('hr'));
     }
   }
 
   if (hookName === 'afterTransform') {
-    // Parsers have now run and may have replaced section elements. Anchor each
-    // styled section's Section Metadata block to whichever still exists: the
-    // marker <hr> placed above, or (first section, no marker inserted) the
-    // original element itself.
+    // Parsers have now run (they replace block instances *inside* the section
+    // grids, e.g. .iconcard/.imagetile — the tagged grid container survives).
+    // Locate each styled section by its stable marker attribute (NOT the
+    // nth-of-type selector, which is now invalid because beforeTransform
+    // inserted <hr> siblings) and append its Section Metadata block as the LAST
+    // child *inside* the section element, so it unambiguously belongs to that
+    // section after the docx -> markdown -> plain.html section split.
     for (let i = sections.length - 1; i >= 0; i -= 1) {
       const section = sections[i];
-      if (!section.style) continue;
+      const sectionEl = element.querySelector(`[${SECTION_MARKER_ATTR}="${section.id}"]`);
 
-      const marker = element.querySelector(`[${SECTION_MARKER_ATTR}="${section.id}"]`);
-      const anchor = marker || element.querySelector(section.selector);
-      if (!anchor) continue; // neither survived — skip, never guess
-
-      const metadataBlock = WebImporter.Blocks.createBlock(document, {
-        name: 'Section Metadata',
-        cells: { style: section.style },
-      });
-      anchor.after(metadataBlock);
-
-      if (marker) {
-        marker.removeAttribute(SECTION_MARKER_ATTR);
-        if (i === 0) marker.remove(); // section 0 never gets a real leading break
+      if (section.style && sectionEl) {
+        const metadataBlock = WebImporter.Blocks.createBlock(document, {
+          name: 'Section Metadata',
+          cells: { style: section.style },
+        });
+        sectionEl.append(metadataBlock);
       }
+
+      // Clean up the temporary marker attribute.
+      if (sectionEl) sectionEl.removeAttribute(SECTION_MARKER_ATTR);
     }
   }
 }

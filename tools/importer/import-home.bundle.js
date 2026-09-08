@@ -34,6 +34,26 @@ var CustomImportScript = (() => {
     return to;
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
 
   // tools/importer/import-home.js
   var import_home_exports = {};
@@ -86,9 +106,11 @@ var CustomImportScript = (() => {
       const image = slide.querySelector(
         ".cmp-promocard__card-image img, .cmp-image__image, img"
       );
-      const label = slide.querySelector(
-        ".cmp-promocard__card-label .cmp-label__text, .cmp-label__text"
-      );
+      const label = Array.from(
+        slide.querySelectorAll(
+          ".cmp-promocard__card-label .cmp-label__text, .cmp-label__text"
+        )
+      ).find((el) => el.textContent.trim());
       const heading = slide.querySelector(
         ".cmp-promocard__card-title .cmp-title__text, .cmp-title__text, h1, h2, h3, h4, h5, h6"
       );
@@ -97,9 +119,12 @@ var CustomImportScript = (() => {
       );
       const ctaLinks = Array.from(
         slide.querySelectorAll(
-          ".cmp-promocard__card-button1 a, .cmp-promocard__card-button2 a, a.cmp-button, .cmp-teaser__action-link"
+          ".cmp-promocard__card-button1 a, .cmp-promocard__card-button2 a, .cmp-teaser__button a, a.cmp-button, .cmp-teaser__action-link"
         )
-      );
+      ).filter((a) => {
+        const href = a.getAttribute("href");
+        return href && href.trim() && !href.trim().startsWith("#");
+      });
       const contentCell = [];
       if (label && label.textContent.trim()) {
         const p = document2.createElement("p");
@@ -187,6 +212,34 @@ var CustomImportScript = (() => {
     element.replaceWith(block);
   }
 
+  // tools/importer/parsers/cards-quote.js
+  function parse5(element, { document: document2 }) {
+    const heading = element.querySelector(
+      ".content .cmp-title__text, .cmp-title__text, h1, h2, h3, h4, h5, h6"
+    );
+    const description = element.querySelector(
+      ".content .cmp-text, .cmp-text, .text"
+    );
+    const ctaLinks = Array.from(
+      element.querySelectorAll(".content a.cmp-button, a.cmp-button")
+    );
+    if (!heading && !description && !ctaLinks.length) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+    const contentCell = [];
+    if (heading) contentCell.push(heading);
+    if (description) contentCell.push(description);
+    contentCell.push(...ctaLinks);
+    const cells = [];
+    cells.push([contentCell]);
+    const block = WebImporter.Blocks.createBlock(document2, {
+      name: "cards-quote",
+      cells
+    });
+    element.replaceWith(block);
+  }
+
   // tools/importer/transformers/dentsplysirona-cleanup.js
   var TransformHook = { beforeTransform: "beforeTransform", afterTransform: "afterTransform" };
   function transform(hookName, element, payload) {
@@ -195,6 +248,8 @@ var CustomImportScript = (() => {
         "#onetrust-consent-sdk",
         ".onetrust-pc-dark-filter"
       ]);
+      element.querySelectorAll('img[src^="data:image/svg"]').forEach((img) => img.remove());
+      element.querySelectorAll("svg").forEach((svg) => svg.remove());
     }
     if (hookName === TransformHook.afterTransform) {
       WebImporter.DOMUtils.remove(element, [
@@ -286,32 +341,32 @@ var CustomImportScript = (() => {
   function transform3(hookName, element, payload) {
     const sections = payload.template && payload.template.sections || [];
     if (hookName === "beforeTransform") {
-      for (let i = sections.length - 1; i >= 0; i -= 1) {
-        const section = sections[i];
-        if (i === 0 && !section.style) continue;
-        const sectionEl = element.querySelector(section.selector);
-        if (!sectionEl) continue;
-        const hr = document.createElement("hr");
-        if (section.style) hr.setAttribute(SECTION_MARKER_ATTR, section.id);
-        sectionEl.before(hr);
+      const resolved = sections.map((section) => ({
+        section,
+        el: element.querySelector(section.selector)
+      }));
+      resolved.forEach(({ section, el }) => {
+        if (el) el.setAttribute(SECTION_MARKER_ATTR, section.id);
+      });
+      for (let i = resolved.length - 1; i >= 0; i -= 1) {
+        const { section, el } = resolved[i];
+        if (i === 0) continue;
+        if (!el) continue;
+        el.before(document.createElement("hr"));
       }
     }
     if (hookName === "afterTransform") {
       for (let i = sections.length - 1; i >= 0; i -= 1) {
         const section = sections[i];
-        if (!section.style) continue;
-        const marker = element.querySelector(`[${SECTION_MARKER_ATTR}="${section.id}"]`);
-        const anchor = marker || element.querySelector(section.selector);
-        if (!anchor) continue;
-        const metadataBlock = WebImporter.Blocks.createBlock(document, {
-          name: "Section Metadata",
-          cells: { style: section.style }
-        });
-        anchor.after(metadataBlock);
-        if (marker) {
-          marker.removeAttribute(SECTION_MARKER_ATTR);
-          if (i === 0) marker.remove();
+        const sectionEl = element.querySelector(`[${SECTION_MARKER_ATTR}="${section.id}"]`);
+        if (section.style && sectionEl) {
+          const metadataBlock = WebImporter.Blocks.createBlock(document, {
+            name: "Section Metadata",
+            cells: { style: section.style }
+          });
+          sectionEl.append(metadataBlock);
         }
+        if (sectionEl) sectionEl.removeAttribute(SECTION_MARKER_ATTR);
       }
     }
   }
@@ -321,13 +376,14 @@ var CustomImportScript = (() => {
     "hero-home": parse,
     "carousel-promo": parse2,
     "cards-feature": parse3,
-    "cards-overlay": parse4
+    "cards-overlay": parse4,
+    "cards-quote": parse5
   };
   var PAGE_TEMPLATE = {
     name: "home",
-    description: "Dentsply Sirona Swiss (de-ch) homepage: hero, promo carousel, feature/goal/contact card grids, photo-overlay navigational cards, and on-demand course carousel.",
+    description: "Dentsply Sirona (en-us) homepage: hero, promo carousel, icon feature card grids, photo-overlay toolkit tiles, course carousel, and text case-study cards.",
     urls: [
-      "https://www.dentsplysirona.com/de-ch"
+      "https://www.dentsplysirona.com/en-us"
     ],
     blocks: [
       {
@@ -336,7 +392,7 @@ var CustomImportScript = (() => {
       },
       {
         name: "carousel-promo",
-        instances: [".slider-container", ".course-card-slider.contentfragmentlist"]
+        instances: [".slider-container"]
       },
       {
         name: "cards-feature",
@@ -345,69 +401,81 @@ var CustomImportScript = (() => {
       {
         name: "cards-overlay",
         instances: [".imagetile"]
+      },
+      {
+        name: "cards-quote",
+        instances: [".quotecard"]
       }
     ],
     sections: [
       {
         id: "section-1",
-        name: "Hero and promo carousel",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid.cmp__container--minus-mt-58",
+        name: "Hero",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.hero.cmp-hero__banner-center--large.cmp-hero__white-title-style:nth-of-type(1)",
         style: null,
-        blocks: ["hero-home", "carousel-promo"],
+        blocks: ["hero-home"],
         defaultContent: []
       },
       {
         id: "section-2",
-        name: "Workflow features",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(2)",
+        name: "Promo carousel",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid.cmp__container--minus-mt-58:nth-of-type(2)",
         style: null,
+        blocks: ["carousel-promo"],
+        defaultContent: []
+      },
+      {
+        id: "section-3",
+        name: "Workflow features",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(3)",
+        style: "grey-soft",
         blocks: ["cards-feature"],
         defaultContent: [".title"]
       },
       {
-        id: "section-3",
-        name: "Toolkit photo cards",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(3)",
-        style: null,
+        id: "section-4",
+        name: "Toolkit photo tiles",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(4)",
+        style: "grey",
         blocks: ["cards-overlay"],
         defaultContent: [".title"]
       },
       {
-        id: "section-4",
-        name: "Goal-oriented tools (dark)",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(4)",
+        id: "section-5",
+        name: "Goal tools (dark)",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(5)",
         style: "dark",
         blocks: ["cards-feature"],
         defaultContent: [".title"]
       },
       {
-        id: "section-5",
-        name: "On-demand courses carousel",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(5)",
+        id: "section-6",
+        name: "Course carousel",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(6)",
         style: null,
         blocks: ["carousel-promo"],
         defaultContent: [".title"]
       },
       {
-        id: "section-6",
-        name: "Dentsply Sirona advantage (blue)",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(6)",
+        id: "section-7",
+        name: "Advantage (blue)",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(7)",
         style: "blue",
         blocks: ["cards-feature"],
         defaultContent: [".title", ".text"]
       },
       {
-        id: "section-7",
-        name: "Single feature story",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(7)",
-        style: null,
-        blocks: [],
-        defaultContent: [".title", ".teaser"]
+        id: "section-8",
+        name: "Case-study cards (dark)",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(8)",
+        style: "dark",
+        blocks: ["cards-quote"],
+        defaultContent: [".title"]
       },
       {
-        id: "section-8",
-        name: "Support and contact",
-        selector: "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(8)",
+        id: "section-9",
+        name: "Contact features",
+        selector: "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(9)",
         style: null,
         blocks: ["cards-feature"],
         defaultContent: [".title"]
@@ -456,10 +524,85 @@ var CustomImportScript = (() => {
     return pageBlocks;
   }
   var import_home_default = {
+    /**
+     * Force lazy-loaded images to resolve BEFORE the transform reads the DOM.
+     * The AEM Core image component ships each `.imagetile` / `.cmp-image` <img>
+     * with a 1x1 base64 GIF placeholder in `src` and swaps in the real Scene7
+     * URL only when the element scrolls into view (IntersectionObserver via
+     * `data-cmp-hook-image`). The importer never scrolls to the deep toolkit
+     * section, so those 6 cards were captured with placeholder/blob src and
+     * rendered broken. onLoad runs in the live page context before transform:
+     * scroll the whole page to trigger every observer, dispatch scroll/resize so
+     * lazy libs that listen for them also fire, then wait for the real `src`
+     * values to land. Best-effort — wrapped so a failure never aborts the import.
+     */
+    onLoad: (_0) => __async(void 0, [_0], function* ({ document: document2 }) {
+      try {
+        const win = document2.defaultView || window;
+        const sleep = (ms) => new Promise((r) => {
+          win.setTimeout(r, ms);
+        });
+        const step = Math.max(400, Math.floor(win.innerHeight * 0.8));
+        const maxScroll = () => Math.max(
+          document2.body.scrollHeight,
+          document2.documentElement.scrollHeight
+        );
+        for (let y = 0; y <= maxScroll(); y += step) {
+          win.scrollTo(0, y);
+          win.dispatchEvent(new win.Event("scroll"));
+          yield sleep(250);
+        }
+        win.scrollTo(0, maxScroll());
+        win.dispatchEvent(new win.Event("scroll"));
+        win.dispatchEvent(new win.Event("resize"));
+        document2.querySelectorAll("img.cmp-image__image--is-loading, .imagetile img, .cmp-image img").forEach((img) => {
+          try {
+            img.scrollIntoView();
+          } catch (e) {
+          }
+        });
+        const isPlaceholder = (s) => !s || s.startsWith("data:") || s.startsWith("blob:");
+        for (let i = 0; i < 20; i += 1) {
+          const pending = [...document2.querySelectorAll(".imagetile img, .cmp-image img")].filter((img) => isPlaceholder(img.getAttribute("src")));
+          if (pending.length === 0) break;
+          win.scrollBy(0, 100);
+          win.dispatchEvent(new win.Event("scroll"));
+          yield sleep(300);
+        }
+        win.scrollTo(0, 0);
+      } catch (e) {
+        console.warn("onLoad lazy-load scroll failed:", e && e.message);
+      }
+    }),
     transform: (payload) => {
       const { document: document2, url, params } = payload;
       const main = document2.body;
       executeTransformers("beforeTransform", main, payload);
+      document2.querySelectorAll(".cmp-title__text .cmp-text--blue, h1 .cmp-text--blue, h2 .cmp-text--blue, h3 .cmp-text--blue, h4 .cmp-text--blue").forEach((span) => {
+        const strong = document2.createElement("strong");
+        strong.textContent = span.textContent;
+        span.replaceWith(strong);
+      });
+      const SECTION_CTAS = [
+        { heading: "Dentsply Sirona Advantage", label: "Learn more", href: "https://www.dentsplysirona.com/en-us/why-ds.html" },
+        { heading: "find what you need", label: "Visit support", href: "https://www.dentsplysirona.com/en-us/support.html" },
+        { heading: "Training to meet you where you are", label: "Explore Academy", href: "https://www.dentsplysirona.com/en-us/learn.html" }
+      ];
+      SECTION_CTAS.forEach(({ heading, label, href }) => {
+        const h = [...main.querySelectorAll("h1, h2, h3, h4")].find((el) => el.textContent.includes(heading));
+        if (!h) return;
+        const section = h.closest("div.bootstrap-grid") || h.parentElement;
+        if (!section) return;
+        if ([...section.querySelectorAll("a")].some((a2) => a2.textContent.trim() === label && a2.closest("p"))) return;
+        const p = document2.createElement("p");
+        const strong = document2.createElement("strong");
+        const a = document2.createElement("a");
+        a.href = href;
+        a.textContent = label;
+        strong.append(a);
+        p.append(strong);
+        section.append(p);
+      });
       const pageBlocks = findBlocksOnPage(document2, PAGE_TEMPLATE);
       pageBlocks.forEach((block) => {
         if (!block.element.parentNode) return;
@@ -475,11 +618,47 @@ var CustomImportScript = (() => {
         }
       });
       executeTransformers("afterTransform", main, payload);
+      const titleEl = document2.querySelector("title");
+      if (titleEl && titleEl.textContent.indexOf("|") !== -1) {
+        const shortTitle = titleEl.textContent.split("|")[0].trim();
+        titleEl.textContent = shortTitle;
+        document2.querySelectorAll('meta[property="og:title"], meta[name="twitter:title"]').forEach((m) => {
+          const c = m.getAttribute("content") || "";
+          if (c.indexOf("|") !== -1) m.setAttribute("content", c.split("|")[0].trim());
+        });
+      }
+      document2.querySelectorAll('meta[name="description"], meta[property="og:description"], meta[name="twitter:description"]').forEach((m) => {
+        let c = (m.getAttribute("content") || "").replace(/\s*\|\s*/g, " \u2014 ").replace(/\s+/g, " ").trim();
+        if (c.length > 140) {
+          c = c.slice(0, 140).replace(/\s+\S*$/, "").trim();
+        }
+        if (c) m.setAttribute("content", c);
+      });
       const hr = document2.createElement("hr");
       main.appendChild(hr);
       WebImporter.rules.createMetadata(main, document2);
       WebImporter.rules.transformBackgroundImages(main, document2);
       WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
+      const isContentNode = (n) => {
+        if (n.tagName !== "TABLE" && n.closest("table")) return false;
+        if (n.tagName === "P" && !n.textContent.trim() && !n.querySelector("img, a, picture")) return false;
+        return true;
+      };
+      const CONTENT_SELECTOR = "table, h1, h2, h3, h4, h5, h6, p";
+      const contentNodes = [...main.querySelectorAll(CONTENT_SELECTOR)].filter(isContentNode);
+      const rebuilt = document2.createElement("div");
+      let placed = 0;
+      contentNodes.forEach((n) => {
+        const isHeading = /^H[1-6]$/.test(n.tagName);
+        const isPageMeta = n.tagName === "TABLE" && /^metadata$/i.test(n.querySelector("th") ? n.querySelector("th").textContent.trim() : "");
+        if (placed > 0 && (isHeading || isPageMeta)) {
+          rebuilt.append(document2.createElement("hr"));
+        }
+        rebuilt.append(n);
+        placed += 1;
+      });
+      main.textContent = "";
+      main.append(rebuilt);
       const path = WebImporter.FileUtils.sanitizePath("/index");
       return [{
         element: main,

@@ -1,47 +1,120 @@
-.hero-home-container .hero-home-wrapper {
-  max-width: unset;
-  padding: 0;
+/* hero-home — full-width dark hero with background photo + centered white text.
+   Values extracted from source: .hero.cmp-hero__banner-center--large
+   (dentsplysirona.com/de-ch). */
+
+/* Full-bleed: cancel the section wrapper max-width/padding for this hero. */
+.hero-home-wrapper {
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .hero-home {
   position: relative;
-  padding: 40px 24px;
-  min-height: 300px;
-}
-
-.hero-home h1,
-.hero-home h2,
-.hero-home h3,
-.hero-home h4,
-.hero-home h5,
-.hero-home h6,
-.hero-home p {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  color: var(--background-color);
-}
-
-.hero-home.no-image * {
-  color: var(--text-color);
-}
-
-.hero-home picture {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  object-fit: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
+  min-height: 480px;
+  padding: 64px 24px;
+  overflow: hidden;
+  background-color: var(--section-dark-bg); /* source block bg: rgb(51 63 76) */
 }
 
-.hero-home img {
-  object-fit: cover;
+/* Row 1 = background image (position it as a full-cover backdrop). */
+.hero-home > div:first-child {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+}
+
+.hero-home > div:first-child > div,
+.hero-home > div:first-child picture {
+  display: block;
   width: 100%;
   height: 100%;
 }
 
+.hero-home > div:first-child img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Overlay gradient (source: linear-gradient white->transparent->black). */
+.hero-home::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: linear-gradient(
+    rgb(255 255 255 / 0%),
+    rgb(0 0 0 / 20%) 50%,
+    rgb(0 0 0)
+  );
+}
+
+/* Row 2 = text content, layered above image + overlay. */
+/* stylelint-disable-next-line no-descending-specificity */
+.hero-home > div:last-child {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-home h1 {
+  margin: 0;
+  max-width: 848px;
+  margin-inline: auto;
+  color: var(--section-light-text);
+  font-family: var(--heading-font-family);
+  font-size: 36px; /* mobile — no brand token; desktop uses --heading-size-xxl */
+  font-weight: var(--heading-weight);
+  line-height: var(--heading-line-height);
+  letter-spacing: var(--heading-letter-spacing);
+  text-align: center;
+}
+
+.hero-home p {
+  margin: 16px auto 0;
+  max-width: 710px;
+  color: var(--section-muted-text);
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-align: center;
+}
+
+/* Fallback when authored without a background image. */
+.hero-home.no-image {
+  background-color: var(--section-dark-bg);
+}
+
+.hero-home.no-image::before {
+  content: none;
+}
+
 @media (width >= 900px) {
   .hero-home {
-    padding: 40px 32px;
+    min-height: 640px; /* source measured height */
+    padding: 96px 32px;
+  }
+
+  .hero-home h1 {
+    font-size: var(--heading-size-xxl); /* source desktop: 69px */
+    letter-spacing: -1.725px; /* hero-specific; no brand token */
+  }
+
+  .hero-home p {
+    font-size: 23px; /* source desktop */
+    line-height: 1.2;
+    letter-spacing: -0.575px;
   }
 }

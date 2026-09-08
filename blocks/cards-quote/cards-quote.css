@@ -1,0 +1,158 @@
+/* Block: cards-quote — dark text-only "quote"/case-study cards.
+ * Source: dentsplysirona.com .quotecard / .quotecard--dark (§8, dark section).
+ * Shared visual values consume global design tokens (styles/brand.css);
+ * genuinely card-specific values (title line-height/letter-spacing,
+ * flex-basis) are kept as literals.
+ *
+ * IMPORTANT layout note: on the migrated page each card is authored as its OWN
+ * `cards-quote` block. EDS renders them as sibling `.cards-quote-wrapper` divs
+ * inside `.section.cards-quote-container`. The horizontal 3-across grid is
+ * therefore built at the SECTION level; the card surface + typography are
+ * styled on the block internals below.
+ */
+
+/* ---- Section-level grid (groups the individual card blocks) ----
+ * Full-bleed: the section spans the viewport so the dark section-metadata
+ * background reaches both edges; cards stay centered within
+ * --content-max-width via symmetric inline padding (no max-width on the
+ * section itself, which would shrink the background). */
+main .section.cards-quote-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--grid-gap);
+
+  /* Dark full-bleed section sits flush against its neighbours (source has no
+   * inter-section gap); the global .section.dark rule uses margin:0, so keep
+   * that here rather than reintroducing the boilerplate 40px. */
+  margin: 0;
+
+  /* Source card row spans 1296px (3×416 + 2×24 gap), 24px narrower than the
+   * global 1320px content width because the source nests the grid in a
+   * bootstrap container with 12px inset. Cap this section's content to match
+   * so card width + row span line up with the source. */
+  padding-inline: max(24px, calc((100% - 1296px) / 2));
+}
+
+/* Section heading runs full width above the card row.
+ * Source keeps ~60px between the heading baseline and the card row; the h3's
+ * own 12px bottom margin + the 24px section row-gap give 36px, so add 24px
+ * more here to reach the source's 60px. */
+main .section.cards-quote-container > .default-content-wrapper {
+  flex: 1 1 100%;
+  max-width: none;
+  margin: 0 0 24px;
+  padding: 0;
+}
+
+/* Each authored card block becomes one grid cell */
+main .section.cards-quote-container > .cards-quote-wrapper {
+  flex: 1 1 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (width >= 600px) {
+  /* tablet: 2-across */
+  main .section.cards-quote-container > .cards-quote-wrapper {
+    flex: 1 1 calc(50% - var(--grid-gap));
+  }
+}
+
+@media (width >= 900px) {
+  /* desktop: 3-across */
+  main .section.cards-quote-container > .cards-quote-wrapper {
+    flex: 1 1 calc(33.333% - 16px);
+    max-width: calc(33.333% - 16px);
+  }
+}
+
+/* ---- Card block internals ---- */
+.cards-quote > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.cards-quote > ul > li {
+  /* border-box so the 24px padding + 1px border are absorbed into the 100%
+   * height (EDS defaults to content-box, which inflated each card by 50px and
+   * broke equal-height alignment with the source). */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--card-padding);
+  background-color: var(--card-bg-dark);
+  border: 1px solid var(--card-border-dark);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.cards-quote .cards-quote-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Heading — light, readable on the dark card surface */
+.cards-quote .cards-quote-card-body h5 {
+  margin: 0;
+  color: var(--section-light-text);
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-size-s);
+  font-weight: var(--heading-weight);
+  line-height: 33.6px; /* card-specific */
+  letter-spacing: -0.7px; /* card-specific */
+}
+
+/* Body copy — light blue-grey */
+.cards-quote .cards-quote-card-body p {
+  margin: 16px 0 8px;
+  color: var(--section-muted-text);
+  font-family: var(--body-font-family);
+  font-size: var(--body-size);
+  font-weight: 400;
+  line-height: var(--body-line-height);
+  letter-spacing: -0.4px; /* card-specific */
+}
+
+/* CTA paragraph pushed to the bottom of the card (equal-height cards) */
+.cards-quote .cards-quote-card-body p:last-child {
+  margin: 0;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+/* CTA link — chartreuse accent with trailing arrow */
+.cards-quote .cards-quote-card-body p:last-child a,
+.cards-quote .cards-quote-card-body a.button:any-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; /* source: 4px between label and trailing arrow */
+  padding: 8px 4px;
+  color: var(--brand-chartreuse);
+  font-size: 18px; /* source CTA label renders at 18px (larger than body) */
+  font-weight: 600;
+  line-height: 26px;
+  text-decoration: none;
+  background: none;
+  border: none;
+}
+
+.cards-quote .cards-quote-card-body p:last-child a::after {
+  content: "→";
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.cards-quote .cards-quote-card-body p:last-child a:hover,
+.cards-quote .cards-quote-card-body a.button:any-link:hover {
+  color: var(--brand-chartreuse);
+  text-decoration: underline;
+  background: none;
+}

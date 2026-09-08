@@ -1,0 +1,39 @@
+{
+  "variantName": "cards-quote",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-09-08T15:38:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/en-us",
+    "originPage": "Dentsply Sirona USA homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "spacious",
+    "purpose": "case-study",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "heading + text + CTA",
+    "buttonCount": 1,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "text-only case-study or outcome card grids",
+      "editorial highlight cards without imagery",
+      "story/update cards with title, description and a single CTA link"
+    ],
+    "notSuitableFor": [
+      "icon-led feature grids (use cards-feature)",
+      "photo-cover navigational tiles (use cards-overlay)",
+      "rotating carousels (use carousel-promo)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/en-us"],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-08T15:38:00.000Z"
+  }
+}

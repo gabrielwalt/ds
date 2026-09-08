@@ -3,8 +3,9 @@
 /**
  * Parser for variant: hero-home
  * Base block: hero
- * Source: https://www.dentsplysirona.com/de-ch
+ * Source: https://www.dentsplysirona.com/en-us
  * Instances: .hero.cmp-hero__banner-center--large, .hero
+ * Re-validated against en-us DOM: 2026-09-08
  * Generated: 2026-09-08
  *
  * The `hero` block table has 1 column and up to 3 rows:

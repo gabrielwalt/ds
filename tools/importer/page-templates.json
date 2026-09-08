@@ -6,10 +6,10 @@
     {
       "name": "home",
       "urls": [
-        "https://www.dentsplysirona.com/de-ch"
+        "https://www.dentsplysirona.com/en-us"
       ],
-      "representativeUrl": "https://www.dentsplysirona.com/de-ch",
-      "description": "Dentsply Sirona Swiss (de-ch) homepage: hero, promo carousel, feature/goal/contact card grids, photo-overlay navigational cards, and on-demand course carousel.",
+      "representativeUrl": "https://www.dentsplysirona.com/en-us",
+      "description": "Dentsply Sirona (en-us) homepage: hero, promo carousel, icon feature card grids, photo-overlay toolkit tiles, course carousel, and text case-study cards.",
       "urlPattern": "/*",
       "blocks": [
         {
@@ -22,8 +22,7 @@
         {
           "name": "carousel-promo",
           "instances": [
-            ".slider-container",
-            ".course-card-slider.contentfragmentlist"
+            ".slider-container"
           ]
         },
         {
@@ -38,25 +37,40 @@
           "instances": [
             ".imagetile"
           ]
+        },
+        {
+          "name": "cards-quote",
+          "instances": [
+            ".quotecard"
+          ]
         }
       ],
       "sections": [
         {
           "id": "section-1",
-          "name": "Hero and promo carousel",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid.cmp__container--minus-mt-58",
+          "name": "Hero",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.hero.cmp-hero__banner-center--large.cmp-hero__white-title-style:nth-of-type(1)",
           "style": null,
           "blocks": [
-            "hero-home",
-            "carousel-promo"
+            "hero-home"
           ],
           "defaultContent": []
         },
         {
           "id": "section-2",
-          "name": "Workflow features",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(2)",
+          "name": "Promo carousel",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid.cmp__container--minus-mt-58:nth-of-type(2)",
           "style": null,
+          "blocks": [
+            "carousel-promo"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-3",
+          "name": "Workflow features",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(3)",
+          "style": "grey-soft",
           "blocks": [
             "cards-feature"
           ],
@@ -65,10 +79,10 @@
           ]
         },
         {
-          "id": "section-3",
-          "name": "Toolkit photo cards",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(3)",
-          "style": null,
+          "id": "section-4",
+          "name": "Toolkit photo tiles",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(4)",
+          "style": "grey",
           "blocks": [
             "cards-overlay"
           ],
@@ -77,9 +91,9 @@
           ]
         },
         {
-          "id": "section-4",
-          "name": "Goal-oriented tools (dark)",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(4)",
+          "id": "section-5",
+          "name": "Goal tools (dark)",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(5)",
           "style": "dark",
           "blocks": [
             "cards-feature"
@@ -89,9 +103,9 @@
           ]
         },
         {
-          "id": "section-5",
-          "name": "On-demand courses carousel",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(5)",
+          "id": "section-6",
+          "name": "Course carousel",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(6)",
           "style": null,
           "blocks": [
             "carousel-promo"
@@ -101,9 +115,9 @@
           ]
         },
         {
-          "id": "section-6",
-          "name": "Dentsply Sirona advantage (blue)",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(6)",
+          "id": "section-7",
+          "name": "Advantage (blue)",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(7)",
           "style": "blue",
           "blocks": [
             "cards-feature"
@@ -114,20 +128,21 @@
           ]
         },
         {
-          "id": "section-7",
-          "name": "Single feature story",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(7)",
-          "style": null,
-          "blocks": [],
+          "id": "section-8",
+          "name": "Case-study cards (dark)",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(8)",
+          "style": "dark",
+          "blocks": [
+            "cards-quote"
+          ],
           "defaultContent": [
-            ".title",
-            ".teaser"
+            ".title"
           ]
         },
         {
-          "id": "section-8",
-          "name": "Support and contact",
-          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(8)",
+          "id": "section-9",
+          "name": "Contact features",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container:nth-of-type(1) > div.cmp-container > div.container.responsivegrid.cmp__container--fluid:nth-of-type(4) > div.cmp-container > div.bootstrap-grid:nth-of-type(9)",
           "style": null,
           "blocks": [
             "cards-feature"

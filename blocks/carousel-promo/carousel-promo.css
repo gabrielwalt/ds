@@ -1,16 +1,35 @@
+/* Block: carousel-promo -- product/course card carousel.
+   Shared design values consume global tokens (styles/brand.css); values with
+   no token stay as per-element literals. Source: dentsplysirona.com/en-us. */
+
+.carousel-promo {
+  position: relative;
+}
+
+/* The promo carousel that sits directly under the hero is pulled UP so its
+   cards overlap the bottom of the hero by ~110px, matching the source's
+   negative-margin stack. The hero and this carousel share one section, so the
+   carousel WRAPPER is pulled up over the preceding hero wrapper. Scoped to a
+   carousel-promo-wrapper that follows a hero-home-wrapper, so the standalone
+   course carousel further down is unaffected. z-index keeps cards above hero. */
+main .section .hero-home-wrapper + .carousel-promo-wrapper {
+  margin-top: -110px;
+  position: relative;
+  z-index: 1;
+}
+
 .carousel-promo .carousel-promo-slides-container {
   position: relative;
 }
 
-.carousel-promo .carousel-promo-slides,
-.carousel-promo .carousel-promo-slide-indicators {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
+/* horizontal, scroll-snapping track showing multiple cards */
 .carousel-promo .carousel-promo-slides {
   display: flex;
+  gap: var(--grid-gap);
+  align-items: stretch;
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   overflow: scroll clip;
@@ -20,134 +39,243 @@
   display: none;
 }
 
+/* each slide IS the card. Base = course card, which the source renders on a
+   PURE WHITE surface (measured rgb(255 255 255)). Promo cards use the slightly
+   off-white surface (measured rgb(250 250 250)) — see the -promo override. */
 .carousel-promo .carousel-promo-slide {
-  flex: 0 0 100%;
+  box-sizing: border-box;
+  flex: 0 0 82%;
+  min-width: 0;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+  gap: 12px;
+  padding: var(--card-padding);
+  background-color: #fff;
+  border: 1px solid var(--card-border-light);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
 }
 
-.carousel-promo .carousel-promo-slide:has(.carousel-promo-slide-content[data-align='center']) {
-  align-items: center;
+/* promo cards distribute content top-to-bottom (image sits mid-card, pill last).
+   Card surface is full white (#fff), same as the course cards. */
+.carousel-promo .carousel-promo-slide-promo {
+  justify-content: space-between;
 }
 
-.carousel-promo .carousel-promo-slide:has(.carousel-promo-slide-content[data-align='right']) {
-  align-items: flex-end;
-}
-
-.carousel-promo .carousel-promo-slide .carousel-promo-slide-image picture {
-  position: absolute;
-  inset: 0;
-}
-
-.carousel-promo .carousel-promo-slide .carousel-promo-slide-image picture > img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-}
-
-.carousel-promo .carousel-promo-slide .carousel-promo-slide-content {
-  z-index: 1;
-  margin: 68px;
-  padding: 16px;
-  color: white;
-  background-color: rgb(19 19 19 / 75%);
-  position: relative;
-  width: var(--slide-content-width, auto);
-}
-
-.carousel-promo .carousel-promo-slide-indicators {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px 12px;
-  padding: 12px;
-  background-color: var(--light-color);
+/* --- image --- */
+.carousel-promo .carousel-promo-slide-image {
   line-height: 0;
 }
 
-.carousel-promo .carousel-promo-slide-indicator button {
-  width: 24px;
-  height: 24px;
+.carousel-promo .carousel-promo-slide-image picture {
+  display: block;
+}
+
+/* course cards: 16:9 photo, cropped */
+.carousel-promo .carousel-promo-slide-image img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-image);
+}
+
+/* promo cards: the source product render is ~374x298 (5:4) and is object-fit
+   contained (transparent PNG), not cropped. Cap its height so the card stays
+   ~502px tall like the source instead of ballooning. */
+.carousel-promo .carousel-promo-slide-promo .carousel-promo-slide-image img {
+  aspect-ratio: 5 / 4;
+  max-height: 298px;
+  object-fit: contain;
+}
+
+/* --- content --- */
+.carousel-promo .carousel-promo-slide-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+
+/* course cards (image, then title, then link) are left-aligned */
+.carousel-promo .carousel-promo-slide-content:has(> h6:first-child) {
+  text-align: left;
+}
+
+.carousel-promo .carousel-promo-slide-content > * {
   margin: 0;
-  padding: 0;
-  border-radius: 50%;
-  background-color: #dadada;
-  transition: background-color 0.2s;
 }
 
-.carousel-promo .carousel-promo-slide-indicator button:disabled,
-.carousel-promo .carousel-promo-slide-indicator button:hover,
-.carousel-promo .carousel-promo-slide-indicator button:focus-visible {
-  background-color: var(--text-color);
+/* eyebrow / label (paragraph without a link) — UPPERCASE muted slate */
+.carousel-promo .carousel-promo-slide-content p:not(:has(a)) {
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  line-height: 1.2;
+  letter-spacing: var(--eyebrow-letter-spacing);
+  text-transform: uppercase;
+  color: rgb(96 118 144);
 }
 
+/* title -- prefixed with `main .section` so the card title stays dark even
+   inside a `blue`/`dark` section (which would otherwise force light text) */
+main .section .carousel-promo .carousel-promo-slide-content h6 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.575px;
+  color: var(--text-color);
+}
+
+/* highlighted words in title (e.g. "Primescan") — source class preserved by parser */
+/* stylelint-disable-next-line selector-class-pattern */
+.carousel-promo .carousel-promo-slide-content .cmp-text--blue {
+  color: var(--brand-blue);
+}
+
+/* --- buttons (paragraphs containing a link) ---
+   CTA paragraphs are tagged by the block JS: `.carousel-promo-cta-tertiary`
+   (transparent text link with → arrow) and `.carousel-promo-cta-primary`
+   (filled blue pill). Both hug their content rather than stretching. */
+.carousel-promo .carousel-promo-cta {
+  margin: 0;
+}
+
+.carousel-promo .carousel-promo-cta a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+/* tertiary / text CTA (with → arrow) — transparent, dark text, hugs content */
+.carousel-promo .carousel-promo-cta-tertiary a {
+  padding: 8px 4px;
+  font-size: 18px;
+  color: var(--text-color);
+  background-color: transparent;
+}
+
+.carousel-promo .carousel-promo-cta-tertiary a::after {
+  content: '→';
+  font-size: 18px;
+  line-height: 1;
+}
+
+.carousel-promo .carousel-promo-cta-tertiary a:hover {
+  color: var(--brand-blue);
+  text-decoration: none;
+}
+
+/* Course cards (heading-led slides): the source renders "Enroll now" in brand
+   blue rather than the near-black used by promo tertiary links. */
+/* stylelint-disable-next-line no-descending-specificity */
+.carousel-promo .carousel-promo-slide-content:has(> h6:first-child) .carousel-promo-cta-tertiary a {
+  color: var(--brand-blue);
+}
+
+/* primary filled pill — hugs content, centered on the card */
+/* stylelint-disable-next-line no-descending-specificity */
+.carousel-promo .carousel-promo-cta-primary a {
+  padding: 12px 24px;
+  font-size: 16px;
+  color: #fff;
+  background-color: var(--brand-blue);
+}
+
+.carousel-promo .carousel-promo-cta-primary a:hover {
+  background-color: var(--brand-blue-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* promo cards center their CTAs; the bottom pill was moved to the card root */
+.carousel-promo .carousel-promo-slide-promo .carousel-promo-cta {
+  text-align: center;
+}
+
+.carousel-promo .carousel-promo-slide-promo > .carousel-promo-cta-primary {
+  align-self: center;
+  margin-top: 0;
+}
+
+/* source disables dot pagination; navigate via arrows only */
+.carousel-promo .carousel-promo-slide-indicators {
+  display: none;
+}
+
+/* --- navigation arrows (44x44 circular, light bg, blue glyph) --- */
 .carousel-promo .carousel-promo-navigation-buttons {
   position: absolute;
   top: 50%;
+  left: -8px;
+  right: -8px;
   transform: translateY(-50%);
-  left: 12px;
-  right: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* stylelint-disable-next-line no-descending-specificity */
 .carousel-promo .carousel-promo-navigation-buttons button {
+  pointer-events: auto;
   position: relative;
   width: 44px;
   height: 44px;
   margin: 0;
-  border-radius: 50%;
   padding: 0;
-  background-color: rgb(19 19 19 / 25%);
+  border: 1px solid var(--card-border-light);
+  border-radius: 50%;
+  background-color: rgb(255 255 255 / 90%);
+  box-shadow: rgb(0 0 0 / 12%) 0 2px 6px 0;
+  cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .carousel-promo .carousel-promo-navigation-buttons button:hover,
 .carousel-promo .carousel-promo-navigation-buttons button:focus-visible {
-  background-color: rgb(19 19 19 / 75%);
+  background-color: #fff;
 }
 
 .carousel-promo .carousel-promo-navigation-buttons button::after {
   display: block;
   content: '';
-  border: 2px solid;
-  border-bottom: 0;
-  border-left: 0;
-  height: 12px;
-  width: 12px;
+  width: 10px;
+  height: 10px;
   position: absolute;
   top: 50%;
   left: calc(50% + 2px);
+  border: 2px solid var(--brand-arrow-blue);
+  border-bottom: 0;
+  border-left: 0;
   transform: translate(-50%, -50%) rotate(-135deg);
 }
 
 .carousel-promo .carousel-promo-navigation-buttons button.slide-next::after {
-  transform: translate(-50%, -50%) rotate(45deg);
   left: calc(50% - 2px);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
+/* responsive: 1 card mobile -> 2 at >=600px -> 3 at >=900px */
 @media (width >= 600px) {
+  .carousel-promo .carousel-promo-slide {
+    flex: 0 0 calc((100% - var(--grid-gap)) / 2);
+  }
+}
+
+@media (width >= 900px) {
+  .carousel-promo .carousel-promo-slide {
+    flex: 0 0 calc((100% - (2 * var(--grid-gap))) / 3);
+  }
+
   .carousel-promo .carousel-promo-navigation-buttons {
-    left: 24px;
-    right: 24px;
-  }
-
-  .carousel-promo .carousel-promo-slide .carousel-promo-slide-content {
-    --slide-content-width: calc((100% - 184px) / 2);
-
-    margin: 92px;
-  }
-
-  .carousel-promo .carousel-promo-slide .carousel-promo-slide-content[data-align='justify'] {
-    --slide-content-width: auto;
+    left: -20px;
+    right: -20px;
   }
 }

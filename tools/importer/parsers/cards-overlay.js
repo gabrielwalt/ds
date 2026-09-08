@@ -3,8 +3,9 @@
 /**
  * Parser for variant: cards-overlay
  * Base block: cards
- * Source: https://www.dentsplysirona.com/de-ch
+ * Source: https://www.dentsplysirona.com/en-us
  * Instances: .imagetile
+ * Re-validated against en-us DOM: 2026-09-08
  * Generated: 2026-09-08
  *
  * The `cards` block table has 2 columns per card row:

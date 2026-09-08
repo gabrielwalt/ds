@@ -1,27 +1,282 @@
+/* Block: cards-feature — icon-led feature cards (source: dentsplysirona.com .teaser / .iconcard)
+ *
+ * IMPORTANT layout note: on this site each feature card is authored as its OWN
+ * `cards-feature` block (a single <li>). EDS renders them as sibling
+ * `.cards-feature-wrapper` divs inside a `.section.cards-feature-container`.
+ * The horizontal 3-/4-across grid is therefore built at the SECTION level,
+ * while the card surface + typography is styled on the block internals below.
+ *
+ * All shared design values are consumed from the brand tokens (brand.css).
+ * LIGHT sections render a solid card surface with dark text; DARK sections
+ * (.section.dark) drop the surface and switch to light text — both wired to
+ * tokens so they stay on-brand and readable.
+ */
+
+/* ---- Section-level grid (groups the individual card blocks) ----
+ * Full-bleed: the section spans the viewport (so a dark/blue/grey section
+ * background reaches both edges), while the cards stay centered within
+ * --content-max-width via a symmetric inline padding. Do NOT put max-width on
+ * the section itself — that would shrink a section-metadata background too. */
+main .section.cards-feature-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--grid-gap);
+  margin: 0; /* section padding is applied by the .section rule (unified model) */
+  padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
+}
+
+/* Section heading / trailing CTA run full width above/below the grid.
+   Heading is LEFT-aligned (only teaser cards + card items are centered on this
+   page); heading→cards gap uses the unified --section-heading-gap token. */
+main .section.cards-feature-container > .default-content-wrapper {
+  flex: 1 1 100%;
+  max-width: none;
+  margin: 0 0 var(--section-heading-gap);
+  padding: 0;
+  text-align: left;
+}
+
+/* Each authored card block becomes one grid cell */
+main .section.cards-feature-container > .cards-feature-wrapper {
+  flex: 1 1 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (width >= 900px) {
+  main .section.cards-feature-container {
+    padding-inline: max(32px, calc((100% - var(--content-max-width)) / 2));
+  }
+
+  main .section.cards-feature-container > .cards-feature-wrapper {
+    /* basis 260px lets 4 cards fit one row (4*260 + 3*24 = 1112) and
+       3-card sections fill the row 3-across */
+    flex: 1 1 260px;
+  }
+}
+
+/* ---- Card block internals ----
+ * The source uses TWO distinct card treatments, keyed on the card content:
+ *   • IMAGE-led cards (§3 "Digitize your workflows") render the source "teaser":
+ *     a pure-WHITE surface with a 1px border, soft shadow, 24px radius and
+ *     CENTER-aligned content.
+ *   • ICON-led cards (§5 / §7 / §9) render the source "iconcard": a solid
+ *     TILE with a 16px radius, no border/shadow and LEFT-aligned content, with
+ *     the tile colour driven by the section (grey on light, dark slate on the
+ *     dark section, darker-blue on the blue banner).
+ * We branch with :has(.cards-feature-card-image) so both live in one block. */
 .cards-feature > ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
-  gap: 24px;
+  height: 100%;
 }
 
 .cards-feature > ul > li {
-  border: 1px solid #dadada;
-  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--card-padding);
 }
 
-.cards-feature .cards-feature-card-body {
-  margin: 16px;
+/* Teaser variant — image-led cards (§3): white surface, centered.
+   Reduced bottom padding (source cards are near-square ~424x428, not tall). */
+.cards-feature > ul > li:has(.cards-feature-card-image) {
+  padding-bottom: 12px;
+  align-items: center;
+  border: 1px solid var(--card-border-light);
+  border-radius: var(--radius-card);
+  background-color: rgb(255 255 255); /* source: pure white (not #fafafa) */
+  box-shadow: var(--shadow-card);
+  text-align: center;
 }
 
+/* Icon-card variant — icon-led cards (§5/§7/§9): solid tile, left-aligned.
+ * Light section (§9) tile is a light grey; dark/blue sections recolour below. */
+.cards-feature > ul > li:not(:has(.cards-feature-card-image)) {
+  align-items: flex-start;
+  border: 0;
+  border-radius: var(--radius-panel); /* 16px — source iconcard */
+  background-color: rgb(246 246 246); /* source §9 light-grey tile */
+  box-shadow: none;
+  text-align: left;
+}
+
+/* Icon / illustration */
 .cards-feature .cards-feature-card-image {
   line-height: 0;
+  margin-bottom: var(--card-padding);
+  width: 100%;
 }
 
-.cards-feature > ul > li img {
+.cards-feature .cards-feature-card-image img {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  max-width: 100%;
+  height: 200px;
+
+  /* No inner box: the illustration sits directly on the white card surface
+     (source shows just the blue circle, no rounded sub-panel). */
+  border-radius: 0;
+  background-color: transparent;
+  object-fit: contain;
+}
+
+/* Hide the stray Dynamic Media "icon carrier" anchor (text "Image without alt
+ * text") that lives in the card IMAGE cell. Real CTAs live in the card BODY
+ * cell, so scoping to the image cell never touches them. The :not(:has(...))
+ * guard means a genuine anchor wrapping a picture/img is left untouched. */
+.cards-feature .cards-feature-card-image a:not(:has(picture, img)) {
+  display: none;
+}
+
+/* Restored Phosphor icon (injected by cards-feature.js for icon-led cards).
+ * The glyph inherits `color` via currentColor, so section variants below just
+ * set the color. Sized ~48px like the source. */
+.cards-feature .cards-feature-card-icon {
+  margin-bottom: var(--card-padding);
+  line-height: 0;
+  color: var(--brand-blue); /* light sections: brand-blue glyph */
+}
+
+.cards-feature .cards-feature-card-icon svg {
+  width: 48px;
+  height: 48px;
+  fill: currentcolor;
+}
+
+/* Text body — grows so the CTA can sit at the card bottom */
+.cards-feature .cards-feature-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.cards-feature .cards-feature-card-body h5,
+.cards-feature .cards-feature-card-body h6 {
+  margin: 0 0 16px; /* source heading→body gap is 16px */
+  font-family: var(--heading-font-family);
+  font-weight: var(--heading-weight);
+  color: var(--text-color);
+  text-align: inherit;
+}
+
+.cards-feature .cards-feature-card-body h5 {
+  font-size: var(--heading-size-s);
+  line-height: 33.6px;
+  letter-spacing: -0.7px;
+}
+
+.cards-feature .cards-feature-card-body h6 {
+  font-size: var(--heading-size-xs);
+  line-height: 27.6px;
+  letter-spacing: -0.575px;
+}
+
+.cards-feature .cards-feature-card-body p {
+  margin: 0 0 8px;
+  font-family: var(--body-font-family);
+  font-size: var(--body-size);
+  font-weight: 400;
+  line-height: var(--body-line-height);
+  color: var(--text-muted);
+  text-align: inherit;
+}
+
+/* Teaser (image-led §3) cards: tighter title→description gap to make the card
+   near-square like the source (was 16px). */
+.cards-feature > ul > li:has(.cards-feature-card-image) .cards-feature-card-body h5,
+.cards-feature > ul > li:has(.cards-feature-card-image) .cards-feature-card-body h6 {
+  margin-bottom: 8px;
+}
+
+/* "Learn more" link — sits just below the description (not pinned to the card
+   bottom, which left too big a gap after short descriptions). */
+.cards-feature .cards-feature-card-body p:last-child {
+  margin: 16px 0 0;
+}
+
+.cards-feature .cards-feature-card-body a:any-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px; /* close to the description text */
+  font-size: 18px; /* source CTA is 18px / 600 */
+  font-weight: 600;
+  color: var(--brand-blue);
+  text-decoration: none;
+}
+
+/* trailing arrow, matching the source CTA treatment */
+.cards-feature .cards-feature-card-body a:any-link::after {
+  content: "→";
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.cards-feature .cards-feature-card-body a:hover {
+  color: var(--link-hover-color);
+}
+
+.cards-feature .cards-feature-card-body a:hover::after {
+  transform: translateX(3px);
+}
+
+/* CTA paragraph sits just below the description (not pushed to the bottom). */
+.cards-feature .cards-feature-card-body > p:last-child:has(> a:only-child) {
+  margin-top: 16px;
+  padding-top: 0;
+}
+
+/* ---- Dark / blue section variant ----
+ * On `.section.dark` (§5 goals) and `.section.blue` (§7 advantage banner) the
+ * source icon-cards are solid TILES (not transparent): the dark section uses a
+ * slate tile rgb(41 51 61) and the blue banner a darker-blue tile rgb(0 80 230)
+ * that reads as a raised panel on the flat section background. Content is
+ * left-aligned with light heading text and muted-light body text. Selectors are
+ * scoped under the section variant and given enough specificity to beat the
+ * base icon-card rule above. */
+main .section.dark .cards-feature > ul > li:not(:has(.cards-feature-card-image)) {
+  background-color: var(--card-bg-dark); /* rgb(41 51 61) source dark tile */
+}
+
+main .section.blue .cards-feature > ul > li:not(:has(.cards-feature-card-image)) {
+  background-color: rgb(0 80 230); /* source blue-banner iconcard tile */
+}
+
+/* Light heading + muted-light body text on the dark/blue tiles */
+main .section.dark .cards-feature .cards-feature-card-body h5,
+main .section.dark .cards-feature .cards-feature-card-body h6,
+main .section.blue .cards-feature .cards-feature-card-body h5,
+main .section.blue .cards-feature .cards-feature-card-body h6 {
+  color: var(--section-light-text);
+}
+
+main .section.dark .cards-feature .cards-feature-card-body p,
+main .section.blue .cards-feature .cards-feature-card-body p {
+  color: var(--section-muted-text);
+}
+
+/* On the dark goals section the source renders the CTA in the chartreuse
+   accent. Keep the same 16px gap from the body copy as the light cards. */
+main .section.dark .cards-feature .cards-feature-card-body a:any-link {
+  margin-top: 16px;
+  color: var(--brand-chartreuse);
+}
+
+main .section.dark .cards-feature .cards-feature-card-body a:hover {
+  color: var(--brand-chartreuse);
+}
+
+/* Icon color per section variant: chartreuse on the dark goals section,
+ * white on the blue advantage banner (matching the source). */
+main .section.dark .cards-feature .cards-feature-card-icon {
+  color: var(--brand-chartreuse);
+}
+
+main .section.blue .cards-feature .cards-feature-card-icon {
+  color: var(--section-light-text);
 }

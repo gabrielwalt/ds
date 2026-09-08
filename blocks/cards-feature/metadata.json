@@ -1,0 +1,39 @@
+{
+  "variantName": "cards-feature",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-09-08T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/de-ch",
+    "originPage": "Dentsply Sirona Switzerland homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "feature",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "icon + heading + text + optional CTA",
+    "buttonCount": 1,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "icon-led feature grids",
+      "workflow step callouts",
+      "goal/benefit lists",
+      "contact/support channel grids"
+    ],
+    "notSuitableFor": [
+      "large photo cover cards",
+      "rotating carousels"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/de-ch"],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-08T00:00:00.000Z"
+  }
+}

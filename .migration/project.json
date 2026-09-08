@@ -1,0 +1,11 @@
+{
+  "type": "da",
+  "sites": {
+    "ds": {
+      "previewOrg": "gabrielwalt",
+      "previewSite": "ds",
+      "contentHostUrl": "https://content.da.live/gabrielwalt/ds/",
+      "libraryUrl": "https://main--sta-boilerplate--aemdemos.aem.page/tools/sidekick/library.json"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "variantName": "cards-overlay",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-09-08T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/de-ch",
+    "originPage": "Dentsply Sirona Switzerland homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "navigation",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "cover photo + title + CTA",
+    "buttonCount": 1,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "photo cover navigational card grids",
+      "toolkit/section entry points with overlaid titles"
+    ],
+    "notSuitableFor": [
+      "icon-only feature lists",
+      "text-heavy descriptions"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/de-ch"],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-08T00:00:00.000Z"
+  }
+}

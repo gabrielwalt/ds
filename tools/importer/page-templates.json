@@ -1,0 +1,142 @@
+{
+  "metadata": {
+    "projectType": "da"
+  },
+  "templates": [
+    {
+      "name": "home",
+      "urls": [
+        "https://www.dentsplysirona.com/de-ch"
+      ],
+      "representativeUrl": "https://www.dentsplysirona.com/de-ch",
+      "description": "Dentsply Sirona Swiss (de-ch) homepage: hero, promo carousel, feature/goal/contact card grids, photo-overlay navigational cards, and on-demand course carousel.",
+      "urlPattern": "/*",
+      "blocks": [
+        {
+          "name": "hero-home",
+          "instances": [
+            ".hero.cmp-hero__banner-center--large",
+            ".hero"
+          ]
+        },
+        {
+          "name": "carousel-promo",
+          "instances": [
+            ".slider-container",
+            ".course-card-slider.contentfragmentlist"
+          ]
+        },
+        {
+          "name": "cards-feature",
+          "instances": [
+            ".teaser.basemarketingproperties",
+            ".iconcard"
+          ]
+        },
+        {
+          "name": "cards-overlay",
+          "instances": [
+            ".imagetile"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Hero and promo carousel",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid.cmp__container--minus-mt-58",
+          "style": null,
+          "blocks": [
+            "hero-home",
+            "carousel-promo"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-2",
+          "name": "Workflow features",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(2)",
+          "style": null,
+          "blocks": [
+            "cards-feature"
+          ],
+          "defaultContent": [
+            ".title"
+          ]
+        },
+        {
+          "id": "section-3",
+          "name": "Toolkit photo cards",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(3)",
+          "style": null,
+          "blocks": [
+            "cards-overlay"
+          ],
+          "defaultContent": [
+            ".title"
+          ]
+        },
+        {
+          "id": "section-4",
+          "name": "Goal-oriented tools (dark)",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(4)",
+          "style": "dark",
+          "blocks": [
+            "cards-feature"
+          ],
+          "defaultContent": [
+            ".title"
+          ]
+        },
+        {
+          "id": "section-5",
+          "name": "On-demand courses carousel",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(5)",
+          "style": null,
+          "blocks": [
+            "carousel-promo"
+          ],
+          "defaultContent": [
+            ".title"
+          ]
+        },
+        {
+          "id": "section-6",
+          "name": "Dentsply Sirona advantage (blue)",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(6)",
+          "style": "blue",
+          "blocks": [
+            "cards-feature"
+          ],
+          "defaultContent": [
+            ".title",
+            ".text"
+          ]
+        },
+        {
+          "id": "section-7",
+          "name": "Single feature story",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(7)",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            ".title",
+            ".teaser"
+          ]
+        },
+        {
+          "id": "section-8",
+          "name": "Support and contact",
+          "selector": "body > div.bootstrap-template.bootstrap-container.container.responsivegrid > div.cmp-container > div.container.responsivegrid.cmp__container--fluid > div.cmp-container > div.bootstrap-grid:nth-of-type(8)",
+          "style": null,
+          "blocks": [
+            "cards-feature"
+          ],
+          "defaultContent": [
+            ".title"
+          ]
+        }
+      ]
+    }
+  ]
+}

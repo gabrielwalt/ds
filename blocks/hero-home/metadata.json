@@ -1,0 +1,38 @@
+{
+  "variantName": "hero-home",
+  "baseBlock": "hero",
+  "version": "1.0.0",
+  "created": "2026-09-08T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/de-ch",
+    "originPage": "Dentsply Sirona Switzerland homepage",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "spacious",
+    "purpose": "hero",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "heading + subheading",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "homepage top banners",
+      "landing pages with a full-width background photo",
+      "pages needing a prominent headline over an image"
+    ],
+    "notSuitableFor": [
+      "text-only intros without a background image",
+      "mid-page feature callouts"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/de-ch"],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-08T00:00:00.000Z"
+  }
+}

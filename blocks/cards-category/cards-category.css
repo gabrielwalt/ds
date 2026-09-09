@@ -5,6 +5,36 @@
  * Unlike the per-card blocks, all tiles live in ONE cards-category block, so
  * the grid is built INSIDE the block (not at section level). */
 
+/* ---- Unified content box for both cards-category sections ----
+ * The two sections use different container mixes: "Shop top categories" is a
+ * padded FLEX row (also `cards-feature-container`, 60px section gutter, with the
+ * "Build your EV" banner beside it), while "Shop top brands" is a plain BLOCK
+ * section. To make the header row AND the tile grid land on the SAME content box
+ * (60→1380 at desktop) in both, we cancel the categories section's own inline
+ * padding and inset the header + grid wrappers themselves: capped to the content
+ * width, centred, with the standard page gutter. */
+main .section.cards-feature-container.cards-category-container {
+  padding-inline: 0;
+}
+
+main .section.cards-category-container > .default-content-wrapper,
+main .section.cards-category-container > .cards-category-wrapper {
+  flex: 1 1 100%;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding-inline: 0;
+}
+
+/* The categories section carries BOTH container classes, so cards-feature.css's
+   `.cards-feature-container > .default-content-wrapper { max-width: none }`
+   would otherwise widen the header past the content box. Re-assert the content
+   width for that combined case (equal specificity, later source order wins). */
+main .section.cards-feature-container.cards-category-container > .default-content-wrapper {
+  max-width: var(--content-max-width);
+}
+
 .cards-category .cards-category-grid {
   list-style: none;
   margin: 0;
@@ -79,11 +109,31 @@ a.cards-category-link:hover .cards-category-icon {
   color: var(--brand-blue);
 }
 
-/* Trailing "All categories" / "All brands" section link. The parser emits it
- * as a default-content paragraph after the tile grid; the source renders it as
- * a 19px brand-blue link. Scope to the cards-category section so it doesn't
- * touch other default content. */
-main .section.cards-category-container > .default-content-wrapper:last-child:not(:first-child) a {
+/* ---- Header row: section title (left) + "All X" link (right, same baseline).
+ * EDS groups the title <h2> and the trailing "All categories"/"All brands"
+ * link paragraph into one .default-content-wrapper (the parser emits them
+ * adjacent, before the tile grid). Lay that wrapper out as a flex row so the
+ * title sits left and the "All X" link right, on a shared baseline; the tile
+ * grid fills the full width below. */
+/* stylelint-disable-next-line no-descending-specificity */
+main .section.cards-category-container > .default-content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+}
+
+main .section.cards-category-container > .default-content-wrapper > h2 {
+  margin: 0;
+}
+
+/* The "All X" link paragraph (the lone paragraph that wraps a link). */
+main .section.cards-category-container > .default-content-wrapper > p:has(a) {
+  margin: 0;
+}
+
+main .section.cards-category-container > .default-content-wrapper > p:has(a) a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -93,16 +143,16 @@ main .section.cards-category-container > .default-content-wrapper:last-child:not
   text-decoration: none;
 }
 
-main .section.cards-category-container > .default-content-wrapper:last-child:not(:first-child) a::after {
+main .section.cards-category-container > .default-content-wrapper > p:has(a) a::after {
   content: "";
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 1.2em;
+  height: 1.2em;
   background-color: currentcolor;
   mask: var(--icon-arrow-right) center / contain no-repeat;
   transition: transform 0.2s ease;
 }
 
-main .section.cards-category-container > .default-content-wrapper:last-child:not(:first-child) a:hover::after {
+main .section.cards-category-container > .default-content-wrapper > p:has(a) a:hover::after {
   transform: translateX(3px);
 }

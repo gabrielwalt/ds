@@ -63,22 +63,26 @@ export default function parse(element, { document }) {
     cells,
   });
 
-  // Emit: [section title heading] + [block] + [trailing "All X" link] so the
-  // section keeps its heading and its "see all" CTA.
+  // Emit the section title and the trailing "All X" link ADJACENT (title then
+  // link), then the tile block. Keeping the heading + "see all" link together
+  // lets the block CSS lay them out as one header row — the title left-aligned
+  // and the link right-aligned on the same baseline — with the tile grid
+  // filling the full width below.
   const frag = document.createDocumentFragment();
   if (titleText) {
     const h2 = document.createElement('h2');
     h2.textContent = titleText;
     frag.append(h2);
   }
-  frag.append(block);
   if (allLink) {
     const p = document.createElement('p');
+    p.className = 'cards-category-all';
     const a = document.createElement('a');
     a.textContent = allLink.textContent.replace(/\s+/g, ' ').trim();
     a.setAttribute('href', allLink.getAttribute('href'));
     p.append(a);
     frag.append(p);
   }
+  frag.append(block);
   element.replaceWith(frag);
 }

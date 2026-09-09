@@ -147,6 +147,55 @@ function decorateAccordions(footer) {
 }
 
 /**
+ * Normalise the link-columns section into per-column <div>s.
+ *
+ * The authored footer fragment nests each link column as
+ *   <div>(section) <div>(column) <h3>…<ul>… </div> … </div>
+ * The LOCAL dev server serves that nesting verbatim (6 column <div>s). But the
+ * EDS content pipeline FLATTENS the inner column <div>s, hoisting each
+ * <h3>/<ul> to become a direct child of the section — so the CSS grid then lays
+ * out 12 loose items (6 headings + 6 lists) instead of 6 columns, and the
+ * accordion logic (which keys off `:scope > div`) finds nothing. Rebuild a
+ * <div> per column here (each <h3> starts a new column, wrapping it and the
+ * following content up to the next <h3>) so BOTH environments match.
+ * @param {Element} footer decorated footer root
+ */
+function normalizeColumns(footer) {
+  const linkSection = footer.firstElementChild;
+  if (!linkSection) return;
+  // The columns container is the element that DIRECTLY holds the <h3> column
+  // headings. In the flattened EDS shape, EDS's own section decoration wraps the
+  // hoisted <h3>/<ul> into a `.default-content-wrapper`; locally the columns are
+  // <div>s directly in the section. Pick whichever directly contains the <h3>s.
+  const container = linkSection.querySelector(':scope > .default-content-wrapper') || linkSection;
+
+  // Already wrapped in column <div>s (local shape) — leave untouched.
+  const hasColumnDivs = [...container.children].some(
+    (c) => c.tagName === 'DIV' && c.querySelector(':scope > h3'),
+  );
+  if (hasColumnDivs) return;
+  // No hoisted <h3> headings means this isn't the flattened columns shape.
+  if (!container.querySelector(':scope > h3')) return;
+
+  const columns = [];
+  let currentCol = null;
+  [...container.children].forEach((child) => {
+    if (child.tagName === 'H3') {
+      currentCol = document.createElement('div');
+      columns.push(currentCol);
+    }
+    // Content before the first <h3> (shouldn't happen) is dropped into the
+    // first column once it exists; otherwise append to the current column.
+    if (currentCol) currentCol.append(child);
+  });
+  // Place the column <div>s as DIRECT children of the section (matching the
+  // local shape the CSS grid targets: `.section:first-child > div`), and drop
+  // the now-empty EDS `.default-content-wrapper` if that was the container.
+  columns.forEach((col) => linkSection.append(col));
+  if (container !== linkSection && !container.children.length) container.remove();
+}
+
+/**
  * loads and decorates the footer
  * @param {Element} block The footer block element
  */
@@ -168,6 +217,7 @@ export default async function decorate(block) {
   const footer = document.createElement('div');
   while (fragment.firstElementChild) footer.append(fragment.firstElementChild);
 
+  normalizeColumns(footer);
   decorateLinks(footer);
   decorateAccordions(footer);
 

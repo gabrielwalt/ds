@@ -205,6 +205,48 @@ export default async function decorate(block) {
     });
     navSections.prepend(backBar);
 
+    // Normalise the two fragment shapes into one before decorating.
+    //
+    // The authored nav fragment nests each mega menu as
+    //   <li> <a>Label</a> <div>(panel) <div>(column) <h3>…<ul>… </div> … </div>
+    // The LOCAL `aem up` dev server serves that nesting verbatim, so the panel
+    // <div> is present. But the EDS content pipeline (DA source → .plain.html)
+    // FLATTENS arbitrary nested <div>s: it drops the panel/column wrappers and
+    // hoists their <h3>/<h4>/<ul> to become direct children of the <li>, and
+    // wraps the bare trigger link in a <p>. That flattened shape has no
+    // `:scope > div` panel, so the mega-menu decoration below never fired on EDS
+    // and every menu rendered inline. Rebuild the panel/column structure here
+    // from the flattened children so BOTH environments end up identical.
+    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
+      // Already has a panel <div> (local shape) — nothing to normalise.
+      if (navSection.querySelector(':scope > div')) return;
+      // A flattened mega-menu trigger has one or more <h3> column headings
+      // hoisted directly into the <li>. Plain links (no <h3>) are left alone.
+      const columnHeads = [...navSection.children].filter((c) => c.tagName === 'H3');
+      if (!columnHeads.length) return;
+
+      // Unwrap the trigger link from its <p> so it sits directly in the <li>
+      // (matches the authored shape the decoration expects).
+      const triggerP = [...navSection.children].find(
+        (c) => c.tagName === 'P' && c.querySelector(':scope > a'),
+      );
+      if (triggerP) triggerP.replaceWith(...triggerP.childNodes);
+
+      // Build the panel and group the flattened children into columns: each
+      // <h3> starts a new column; everything up to the next <h3> belongs to it.
+      const panelDiv = document.createElement('div');
+      let currentCol = null;
+      [...navSection.children].forEach((child) => {
+        if (child.tagName === 'A') return; // the trigger link stays in the <li>
+        if (child.tagName === 'H3') {
+          currentCol = document.createElement('div');
+          panelDiv.append(currentCol);
+        }
+        if (currentCol) currentCol.append(child);
+      });
+      navSection.append(panelDiv);
+    });
+
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
       // A top-level item is a mega-menu trigger when it wraps a panel <div>
       // (the mega content). Mark it .nav-drop and tag the panel .nav-megamenu.

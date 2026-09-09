@@ -69,6 +69,10 @@ var CustomImportScript = (() => {
     const heading = element.querySelector(
       ".cmp-hero__title .cmp-maintitle__text, .cmp-maintitle__text, .cmp-hero__title h1, h1, h2"
     );
+    if (heading) {
+      const text = heading.textContent.replace(/\s+/g, " ").trim();
+      if (text) heading.textContent = text;
+    }
     const subheading = element.querySelector(
       ".cmp-hero__subheading .cmp-text, .cmp-hero__subheading, .cmp-text"
     );
@@ -87,7 +91,7 @@ var CustomImportScript = (() => {
       return strong;
     });
     const cells = [];
-    if (bgImage) cells.push([bgImage]);
+    cells.push([bgImage || ""]);
     const contentCell = [];
     if (heading) contentCell.push(heading);
     if (subheading) contentCell.push(subheading);
@@ -212,15 +216,16 @@ var CustomImportScript = (() => {
       h2.textContent = titleText;
       frag.append(h2);
     }
-    frag.append(block);
     if (allLink) {
       const p = document2.createElement("p");
+      p.className = "cards-category-all";
       const a = document2.createElement("a");
       a.textContent = allLink.textContent.replace(/\s+/g, " ").trim();
       a.setAttribute("href", allLink.getAttribute("href"));
       p.append(a);
       frag.append(p);
     }
+    frag.append(block);
     element.replaceWith(frag);
   }
 

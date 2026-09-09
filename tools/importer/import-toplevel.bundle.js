@@ -316,6 +316,40 @@ var CustomImportScript = (() => {
     element.replaceWith(block);
   }
 
+  // tools/importer/parsers/course-teaser.js
+  function parse8(element, { document: document2 }) {
+    const image = element.querySelector("img, .cmp-image__image");
+    const heading = element.querySelector(
+      ".page-break-title .cmp-title__text, .page-break-title h1, .page-break-title h2, .page-break-title h3"
+    );
+    const subEl = element.querySelector(".page-break-subheading .cmp-title__text");
+    let description = null;
+    if (subEl && subEl.textContent.trim()) {
+      description = document2.createElement("p");
+      description.textContent = subEl.textContent.replace(/\s+/g, " ").trim();
+    }
+    const ctaLinks = Array.from(
+      element.querySelectorAll(".page-break-button-container a, a.cmp-button")
+    ).filter((a) => {
+      const href = a.getAttribute("href");
+      return href && href.trim() && !href.trim().startsWith("#");
+    });
+    if (!heading && !description && !image) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+    const contentCell = [];
+    if (heading) contentCell.push(heading);
+    if (description) contentCell.push(description);
+    contentCell.push(...ctaLinks);
+    const cells = [[image || "", contentCell]];
+    const block = WebImporter.Blocks.createBlock(document2, {
+      name: "cards-feature",
+      cells
+    });
+    element.replaceWith(block);
+  }
+
   // tools/importer/transformers/dentsplysirona-cleanup.js
   var TransformHook = { beforeTransform: "beforeTransform", afterTransform: "afterTransform" };
   function transform(hookName, element, payload) {
@@ -330,6 +364,13 @@ var CustomImportScript = (() => {
         if (/^browse by\b.*:?\s*$/i.test(h.textContent.trim())) {
           const wrapper = h.closest(".title") || h;
           wrapper.remove();
+        }
+      });
+      element.querySelectorAll(".cmp-shophero__signin, .hero.hidden").forEach((el) => el.remove());
+      element.querySelectorAll("p, span, div").forEach((el) => {
+        const t = el.textContent.trim();
+        if (/^welcome,?\s*\$?\{?firstname\}?!?$/i.test(t) || /^welcome!$/i.test(t)) {
+          el.remove();
         }
       });
       element.querySelectorAll('img[src^="data:image/svg"]').forEach((img) => img.remove());
@@ -463,7 +504,8 @@ var CustomImportScript = (() => {
     "cards-overlay": parse4,
     "cards-quote": parse5,
     "accordion": parse6,
-    "video": parse7
+    "video": parse7,
+    "course-teaser": parse8
   };
   var PAGE_TEMPLATE = {
     "name": "toplevel",
@@ -519,6 +561,12 @@ var CustomImportScript = (() => {
         "name": "video",
         "instances": [
           ".videoslider"
+        ]
+      },
+      {
+        "name": "course-teaser",
+        "instances": [
+          ".pagebreaker-wrapper"
         ]
       }
     ]
@@ -614,6 +662,47 @@ var CustomImportScript = (() => {
       } catch (e) {
         console.warn("onLoad lazy-load scroll failed:", e && e.message);
       }
+      try {
+        const win = document2.defaultView || window;
+        const colourToStyle = (rgb) => {
+          const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/.exec(rgb || "");
+          if (!m) return null;
+          const r = +m[1];
+          const g = +m[2];
+          const bl = +m[3];
+          const a = m[4] === void 0 ? 1 : parseFloat(m[4]);
+          if (a === 0) return null;
+          const avg = (r + g + bl) / 3;
+          if (avg < 110) return "dark";
+          if (avg > 245) return null;
+          if (avg >= 200) return "grey";
+          return null;
+        };
+        const headings = [...document2.querySelectorAll("main h1, main h2, main h3, main h4, main h5, main h6, .cmp-container h1, .cmp-container h2, .cmp-container h3")];
+        const seen = /* @__PURE__ */ new Set();
+        headings.forEach((h) => {
+          if (!h.textContent.trim()) return;
+          let el = h;
+          for (let i = 0; i < 12 && el; i += 1) {
+            const cs = win.getComputedStyle(el);
+            const rect = el.getBoundingClientRect();
+            if (rect.width >= 1e3) {
+              const style = colourToStyle(cs.backgroundColor);
+              if (style) {
+                const key = `${el.className}|${Math.round(rect.top)}`;
+                if (!seen.has(key)) {
+                  seen.add(key);
+                  h.setAttribute("data-excat-section-style", style);
+                }
+                break;
+              }
+            }
+            el = el.parentElement;
+          }
+        });
+      } catch (e) {
+        console.warn("onLoad section-style detection failed:", e && e.message);
+      }
     }),
     transform: (payload) => {
       const { document: document2, url, params } = payload;
@@ -623,6 +712,22 @@ var CustomImportScript = (() => {
         const strong = document2.createElement("strong");
         strong.textContent = span.textContent;
         span.replaceWith(strong);
+      });
+      document2.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
+        h.querySelectorAll("a").forEach((a) => {
+          const href = a.getAttribute("href");
+          if (!href || !href.trim()) {
+            if (a.textContent.trim()) {
+              a.replaceWith(document2.createTextNode(a.textContent));
+            } else {
+              a.remove();
+            }
+          }
+        });
+        h.querySelectorAll("p").forEach((pEl) => {
+          if (!pEl.textContent.trim()) pEl.remove();
+          else pEl.replaceWith(...pEl.childNodes);
+        });
       });
       const pageBlocks = findBlocksOnPage(document2, PAGE_TEMPLATE);
       pageBlocks.forEach((block) => {
@@ -669,15 +774,31 @@ var CustomImportScript = (() => {
       const contentNodes = [...main.querySelectorAll(CONTENT_SELECTOR)].filter(isContentNode);
       const rebuilt = document2.createElement("div");
       let placed = 0;
+      let pendingStyle = null;
+      const flushSectionMetadata = () => {
+        if (!pendingStyle) return;
+        const metadataBlock = WebImporter.Blocks.createBlock(document2, {
+          name: "Section Metadata",
+          cells: { style: pendingStyle }
+        });
+        rebuilt.append(metadataBlock);
+        pendingStyle = null;
+      };
       contentNodes.forEach((n) => {
         const isHeading = /^H[1-6]$/.test(n.tagName);
         const isPageMeta = n.tagName === "TABLE" && /^metadata$/i.test(n.querySelector("th") ? n.querySelector("th").textContent.trim() : "");
         if (placed > 0 && (isHeading || isPageMeta)) {
+          flushSectionMetadata();
           rebuilt.append(document2.createElement("hr"));
+        }
+        if (isHeading && n.getAttribute("data-excat-section-style")) {
+          pendingStyle = n.getAttribute("data-excat-section-style");
+          n.removeAttribute("data-excat-section-style");
         }
         rebuilt.append(n);
         placed += 1;
       });
+      flushSectionMetadata();
       [...rebuilt.querySelectorAll("h1, h2, h3, h4, h5, h6")].forEach((h) => {
         let sib = h.nextElementSibling;
         let hasContent = false;

@@ -9,6 +9,7 @@ import cardsOverlayParser from './parsers/cards-overlay.js';
 import cardsQuoteParser from './parsers/cards-quote.js';
 import accordionParser from './parsers/accordion.js';
 import videoParser from './parsers/video.js';
+import courseTeaserParser from './parsers/course-teaser.js';
 
 // TRANSFORMER IMPORTS
 import cleanupTransformer from './transformers/dentsplysirona-cleanup.js';
@@ -24,6 +25,7 @@ const parsers = {
   'cards-quote': cardsQuoteParser,
   'accordion': accordionParser,
   'video': videoParser,
+  'course-teaser': courseTeaserParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION - Embedded from page-templates.json
@@ -81,6 +83,12 @@ const PAGE_TEMPLATE = {
       "name": "video",
       "instances": [
         ".videoslider"
+      ]
+    },
+    {
+      "name": "course-teaser",
+      "instances": [
+        ".pagebreaker-wrapper"
       ]
     }
   ]
@@ -203,6 +211,62 @@ export default {
       // eslint-disable-next-line no-console
       console.warn('onLoad lazy-load scroll failed:', e && e.message);
     }
+
+    // DETECT SECTION BACKGROUNDS while getComputedStyle is available (onLoad runs
+    // in the live page). The top-level pages give some sections a coloured band
+    // (e.g. Support: "Access hardware…" light-grey, "Our Policies" / "Let's
+    // connect" dark). Those colours come from a wrapper class, not inline style,
+    // so they can only be read from the rendered page — not the static markup or
+    // the flattened output. For each section heading, walk up to the nearest
+    // full-width ancestor with a non-transparent background, map the colour to a
+    // style name, and stamp the heading with data-excat-section-style. The
+    // flatten step (transform) then emits a Section Metadata block per styled
+    // section. Best-effort and wrapped so it never aborts the import.
+    try {
+      const win = document.defaultView || window;
+      // Map a computed rgb(...) colour to a brand section style name. Matches
+      // the tokens in styles/brand.css: dark rgb(51 63 76), grey rgb(229 229
+      // 229). Anything close to white/transparent → no style (default light).
+      const colourToStyle = (rgb) => {
+        const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/.exec(rgb || '');
+        if (!m) return null;
+        const r = +m[1]; const g = +m[2]; const bl = +m[3];
+        const a = m[4] === undefined ? 1 : parseFloat(m[4]);
+        if (a === 0) return null; // transparent
+        const avg = (r + g + bl) / 3;
+        if (avg < 110) return 'dark'; // dark slate band rgb(51 63 76)
+        if (avg > 245) return null; // white / near-white → default section
+        if (avg >= 200) return 'grey'; // light-grey band rgb(229 229 229)
+        return null;
+      };
+      const headings = [...document.querySelectorAll('main h1, main h2, main h3, main h4, main h5, main h6, .cmp-container h1, .cmp-container h2, .cmp-container h3')];
+      const seen = new Set();
+      headings.forEach((h) => {
+        if (!h.textContent.trim()) return;
+        let el = h;
+        for (let i = 0; i < 12 && el; i += 1) {
+          const cs = win.getComputedStyle(el);
+          const rect = el.getBoundingClientRect();
+          if (rect.width >= 1000) {
+            const style = colourToStyle(cs.backgroundColor);
+            if (style) {
+              // Only stamp the FIRST heading of the section (avoid tagging every
+              // sub-heading inside the same coloured band).
+              const key = `${el.className}|${Math.round(rect.top)}`;
+              if (!seen.has(key)) {
+                seen.add(key);
+                h.setAttribute('data-excat-section-style', style);
+              }
+              break;
+            }
+          }
+          el = el.parentElement;
+        }
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('onLoad section-style detection failed:', e && e.message);
+    }
   },
 
   transform: (payload) => {
@@ -228,6 +292,33 @@ export default {
       const strong = document.createElement('strong');
       strong.textContent = span.textContent;
       span.replaceWith(strong);
+    });
+
+    // 1c. Normalise headings whose text is wrapped in href-less anchors. Some
+    //     source titles author the text inside empty <a> tags, e.g. Learn's
+    //     "Explore our learning paths": <h3><p><a></a><a>Explore our learning
+    //     paths</a></p></h3>. Serialization turns the inner <a> into an empty-
+    //     href link and drops the <h3>, so the section title renders as a broken
+    //     link instead of a heading. Unwrap any href-less anchor inside a heading
+    //     (replace it with its text) and drop empty anchors, so the heading text
+    //     survives as a proper heading.
+    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
+      h.querySelectorAll('a').forEach((a) => {
+        const href = a.getAttribute('href');
+        if (!href || !href.trim()) {
+          if (a.textContent.trim()) {
+            a.replaceWith(document.createTextNode(a.textContent));
+          } else {
+            a.remove();
+          }
+        }
+      });
+      // Collapse a lone wrapping <p> left inside the heading so the text sits
+      // directly in the heading element.
+      h.querySelectorAll('p').forEach((pEl) => {
+        if (!pEl.textContent.trim()) pEl.remove();
+        else pEl.replaceWith(...pEl.childNodes);
+      });
     });
 
     // 2. Find blocks on page
@@ -327,20 +418,46 @@ export default {
       return true;
     };
     const CONTENT_SELECTOR = 'table, h1, h2, h3, h4, h5, h6, p';
+    // Capture each heading's detected section style (stamped in onLoad) BEFORE
+    // rebuilding, keyed by the heading node, so we can emit a Section Metadata
+    // block at the end of that heading's section.
     const contentNodes = [...main.querySelectorAll(CONTENT_SELECTOR)].filter(isContentNode);
     const rebuilt = document.createElement('div');
     let placed = 0;
+    let pendingStyle = null; // style for the section currently being built
+    const flushSectionMetadata = () => {
+      if (!pendingStyle) return;
+      const metadataBlock = WebImporter.Blocks.createBlock(document, {
+        name: 'Section Metadata',
+        cells: { style: pendingStyle },
+      });
+      rebuilt.append(metadataBlock);
+      pendingStyle = null;
+    };
     contentNodes.forEach((n) => {
       const isHeading = /^H[1-6]$/.test(n.tagName);
       const isPageMeta = n.tagName === 'TABLE' && /^metadata$/i.test((n.querySelector('th') ? n.querySelector('th').textContent.trim() : ''));
       // Start a new section before a heading, and before the trailing page
       // Metadata block, but never before the very first placed node.
       if (placed > 0 && (isHeading || isPageMeta)) {
+        // Close the previous section with its Section Metadata (if styled)
+        // BEFORE the section break, so the metadata belongs to that section.
+        flushSectionMetadata();
         rebuilt.append(document.createElement('hr'));
+      }
+      // A heading that was stamped with a detected background opens a styled
+      // section; remember the style so we can emit its Section Metadata when the
+      // section closes.
+      if (isHeading && n.getAttribute('data-excat-section-style')) {
+        pendingStyle = n.getAttribute('data-excat-section-style');
+        n.removeAttribute('data-excat-section-style');
       }
       rebuilt.append(n);
       placed += 1;
     });
+    // Close the final section's metadata (before the trailing page Metadata is
+    // appended by createMetadata — which already ran, so append at the very end).
+    flushSectionMetadata();
 
     // Drop ORPHAN headings — a heading with no content between it and the next
     // section break (<hr>) or the end. On the top-level pages a few section

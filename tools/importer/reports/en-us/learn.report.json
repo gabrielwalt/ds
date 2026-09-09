@@ -2,7 +2,7 @@
   "status": "success",
   "url": "https://www.dentsplysirona.com/en-us/learn.html",
   "path": "en-us/learn",
-  "timestamp": "2026-09-09T03:03:50.501Z",
+  "timestamp": "2026-09-09T05:34:28.704Z",
   "title": "DS Academy: Flexible Dental Education for Professional Growth",
   "template": "toplevel",
   "blocks": [
@@ -30,6 +30,7 @@
     "carousel-promo",
     "carousel-promo",
     "video",
-    "video"
+    "video",
+    "course-teaser"
   ]
 }

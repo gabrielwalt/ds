@@ -208,6 +208,12 @@
           "instances": [
             ".videoslider"
           ]
+        },
+        {
+          "name": "course-teaser",
+          "instances": [
+            ".pagebreaker-wrapper"
+          ]
         }
       ]
     },

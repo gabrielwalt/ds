@@ -2,7 +2,7 @@
   "status": "success",
   "url": "https://www.dentsplysirona.com/en-us/why-ds.html",
   "path": "en-us/why-ds",
-  "timestamp": "2026-09-09T03:04:06.125Z",
+  "timestamp": "2026-09-09T05:34:42.901Z",
   "title": "Why DS",
   "template": "toplevel",
   "blocks": [
@@ -25,6 +25,7 @@
     "cards-feature",
     "cards-feature",
     "carousel-promo",
-    "carousel-promo"
+    "carousel-promo",
+    "course-teaser"
   ]
 }

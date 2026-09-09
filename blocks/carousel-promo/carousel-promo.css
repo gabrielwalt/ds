@@ -6,16 +6,13 @@
   position: relative;
 }
 
-/* The promo carousel that sits directly under the hero is pulled UP so its
-   cards overlap the bottom of the hero by ~110px, matching the source's
-   negative-margin stack. The hero and this carousel share one section, so the
-   carousel WRAPPER is pulled up over the preceding hero wrapper. Scoped to a
-   carousel-promo-wrapper that follows a hero-home-wrapper, so the standalone
-   course carousel further down is unaffected. z-index keeps cards above hero. */
+/* The homepage promo carousel that sits directly under the hero overlaps it
+   more deeply than the default shared amount (~110px vs 72px), matching the
+   source's negative-margin stack. It uses the SHARED hero-overlap mechanism
+   (styles.css `.hero-home-wrapper + [class$="-wrapper"]`); here we only deepen
+   the shared `--hero-overlap` token for a carousel that follows a hero. */
 main .section .hero-home-wrapper + .carousel-promo-wrapper {
-  margin-top: -110px;
-  position: relative;
-  z-index: 1;
+  --hero-overlap: 110px;
 }
 
 .carousel-promo .carousel-promo-slides-container {

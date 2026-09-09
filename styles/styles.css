@@ -34,6 +34,10 @@
   /* smaller vertical section padding on phones (brand.css sets the 64px
      desktop value; stepped back up at >=600px below) */
   --section-padding-block: 40px;
+
+  /* default overlap of a card row that follows a full-bleed hero (shared by the
+     homepage carousel and the Shop promo cards; blocks may deepen it) */
+  --hero-overlap: 72px;
 }
 
 @media (width >= 600px) {
@@ -361,6 +365,21 @@ main > .section > div {
   main > .section > div {
     padding: 0 32px;
   }
+}
+
+/* ---- Shared hero-overlap pattern ----
+ * Both the homepage and the Shop page place a row of cards directly under a
+ * full-bleed hero, with the cards pulled UP so they overlap the hero's lower
+ * edge. This is ONE shared mechanism: a content wrapper that immediately
+ * follows a `.hero-home-wrapper` inside the same section is lifted by
+ * `--hero-overlap` (default token in :root above) and raised above the hero.
+ * The overlap amount is a token so individual blocks/pages can tune it (the
+ * homepage carousel deepens it; the Shop promo row uses the default). z-index
+ * keeps the lifted cards above the hero. */
+main .section > .hero-home-wrapper + [class$='-wrapper'] {
+  margin-top: calc(-1 * var(--hero-overlap));
+  position: relative;
+  z-index: 1;
 }
 
 /* section metadata */

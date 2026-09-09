@@ -150,6 +150,10 @@ export default async function decorate(block) {
     brandLink.className = '';
     const container = brandLink.closest('.button-container');
     if (container) container.className = '';
+    // Logo click returns to the site homepage. The migrated homepage lives at
+    // /en-us/ (sibling of the other en-us pages); point the brand link there
+    // instead of the absolute source URL carried in the fragment.
+    brandLink.setAttribute('href', '/en-us/');
     // Inject the DS logo from the code repo. The SVG (~55KB) is NOT embedded in
     // the nav fragment because DA rejects fragment images over 40KB; the
     // fragment carries only the accessible brand text, which we swap for the
@@ -238,33 +242,58 @@ export default async function decorate(block) {
           }
         });
       }
-      // Desktop: a mega-menu trigger (has a panel) TOGGLES its panel on click
-      // (not hover) so the pointer can travel down into the panel without it
-      // closing. Its <a> carries a real href, so preventDefault to toggle
-      // instead of navigating. Plain links (no panel) navigate normally. The
-      // blue hover underline stays CSS-driven (:hover + [aria-expanded='true']),
-      // so it also persists while the panel is open.
+      // Desktop: mega menus open on HOVER (not click), so the top-level links
+      // stay clickable and navigate to their own pages. See the hover wiring
+      // below (openTimer / closeTimer). On desktop the click handler here only
+      // handles mobile drill-in; desktop clicks fall through and navigate.
       navSection.addEventListener('click', (e) => {
         if (!panel) return; // plain link — let it navigate
-        if (isDesktop.matches) {
-          // Desktop: toggle the mega panel open/closed on click.
-          e.preventDefault();
-          const expanded = navSection.getAttribute('aria-expanded') === 'true';
-          toggleAllNavSections(navSections);
-          navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-        } else {
-          // Mobile/tablet: DRILL IN. Only a tap on the top-level label anchor
-          // (not on content inside the mega panel) opens the section.
-          const labelLink = navSection.querySelector(':scope > a');
-          const inPanel = e.target.closest('.nav-megamenu');
-          const onLabel = labelLink && labelLink.contains(e.target);
-          if (inPanel || !onLabel) return;
-          e.preventDefault();
-          toggleAllNavSections(navSections); // collapse siblings
-          navSection.setAttribute('aria-expanded', 'true');
-          navSections.classList.add('nav-drilled');
-        }
+        if (isDesktop.matches) return; // desktop: let the link navigate (hover opens the panel)
+        // Mobile/tablet: DRILL IN. Only a tap on the top-level label anchor
+        // (not on content inside the mega panel) opens the section.
+        const labelLink = navSection.querySelector(':scope > a');
+        const inPanel = e.target.closest('.nav-megamenu');
+        const onLabel = labelLink && labelLink.contains(e.target);
+        if (inPanel || !onLabel) return;
+        e.preventDefault();
+        toggleAllNavSections(navSections); // collapse siblings
+        navSection.setAttribute('aria-expanded', 'true');
+        navSections.classList.add('nav-drilled');
       });
+
+      // Desktop HOVER behaviour for mega-menu triggers:
+      //  • Hovering the trigger for 0.5s opens its panel (rapid CSS animation).
+      //  • Moving the pointer DOWN into the open panel keeps it open (the panel
+      //    is part of the same <li>, so pointerleave doesn't fire between them).
+      //  • The panel closes only after the pointer has left the whole item
+      //    (trigger + panel) for 2s — giving a generous margin to move around,
+      //    and specifically only closing once the cursor is below the menu.
+      if (panel && !navSection.dataset.hoverWired) {
+        navSection.dataset.hoverWired = 'true';
+        navSection.addEventListener('pointerenter', () => {
+          if (!isDesktop.matches) return;
+          // cancel any pending close, and any other item's pending open
+          clearTimeout(navSection.closeTimer);
+          navSections.querySelectorAll('.nav-drop').forEach((other) => {
+            if (other !== navSection) clearTimeout(other.openTimer);
+          });
+          navSection.openTimer = setTimeout(() => {
+            toggleAllNavSections(navSections); // collapse any other open panel
+            navSection.setAttribute('aria-expanded', 'true');
+          }, 500);
+        });
+        navSection.addEventListener('pointerleave', () => {
+          if (!isDesktop.matches) return;
+          // cancel a pending open if the pointer leaves before 0.5s elapsed
+          clearTimeout(navSection.openTimer);
+          if (navSection.getAttribute('aria-expanded') !== 'true') return;
+          // close only after the pointer has been away for 2s
+          clearTimeout(navSection.closeTimer);
+          navSection.closeTimer = setTimeout(() => {
+            navSection.setAttribute('aria-expanded', 'false');
+          }, 2000);
+        });
+      }
 
       // Mobile category accordion (level 3): each mega column heading toggles
       // its own content open/closed inside the drilled section panel.

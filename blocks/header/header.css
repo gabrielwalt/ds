@@ -12,12 +12,14 @@ header nav {
   box-sizing: border-box;
   display: grid;
 
-  /* Mobile/tablet closed toolbar: search (left) · brand (center) · hamburger
-     (right). Log In (.nav-tools) is hidden in the bar and shown inside the
-     opened overlay. */
+  /* Mobile/tablet closed toolbar: brand (left) · search · hamburger (right).
+     The brand column is flexible (1fr) so it sits at the far left and pushes
+     the search icon + hamburger together at the right, with the search icon
+     immediately to the LEFT of the hamburger. Log In (.nav-tools) is hidden in
+     the bar and shown inside the opened overlay. */
   grid-template:
-    'search brand hamburger' var(--nav-height)
-    'sections sections sections' 1fr / auto 1fr auto;
+    'brand search hamburger' var(--nav-height)
+    'sections sections sections' 1fr / 1fr auto auto;
   align-items: center;
   gap: 0 24px;
   margin: auto;
@@ -29,9 +31,9 @@ header nav {
 
 header nav[aria-expanded='true'] {
   grid-template:
-    'search brand hamburger' var(--nav-height)
+    'brand search hamburger' var(--nav-height)
     'sections sections sections' 1fr
-    'tools tools tools' var(--nav-height) / auto 1fr auto;
+    'tools tools tools' var(--nav-height) / 1fr auto auto;
   overflow-y: auto;
   min-height: 100dvh;
 }
@@ -233,14 +235,16 @@ header nav .nav-back {
    (level 3). A back bar returns to level 1; the hamburger's X closes all.
    ===================================================================== */
 @media (width < 900px) {
-  /* Closed toolbar: search icon (left), brand (center), hamburger (right).
-     The search lives inside .nav-tools (injected there by header.js), so place
-     .nav-tools itself in the left `search` area and hide only the Log In link
-     in the bar (Log In lives in the opened overlay instead). The selector is
-     scoped to header nav to out-specify the later base `.nav-tools` rule. */
+  /* Closed toolbar: brand (left), search icon + hamburger (right, search
+     immediately left of the hamburger). The search lives inside .nav-tools
+     (injected there by header.js), so place .nav-tools itself in the `search`
+     grid area and pin it to the END of that column so it sits right against the
+     hamburger. Hide only the Log In link in the bar (Log In lives in the opened
+     overlay instead). The selector is scoped to header nav to out-specify the
+     later base `.nav-tools` rule. */
   header nav[aria-expanded='false'] .nav-tools {
     grid-area: search;
-    justify-self: start;
+    justify-self: end;
   }
 
   /* Hide the Log In container in the closed bar (it lives in .nav-tools next to
@@ -249,9 +253,10 @@ header nav .nav-back {
     display: none;
   }
 
-  /* A compact magnifier that expands into a pill input on focus/tap. */
+  /* A compact magnifier that expands into a pill input on focus/tap. Pinned to
+     the END of its column so the icon sits immediately left of the hamburger. */
   header nav .nav-search {
-    justify-self: start;
+    justify-self: end;
     width: max-content; /* size to content so the icon-only rest state shows */
     height: 40px;
     padding: 0;
@@ -679,12 +684,12 @@ header nav .nav-back {
     opacity: 1;
   }
 
-  /* --- mega-menu panel --- */
+  /* --- mega-menu panel ---
+     The panel is always laid out (flex) but hidden via opacity/visibility and a
+     small upward offset, so opening can ANIMATE (display:none can't transition).
+     `visibility: hidden` + `pointer-events: none` keep it non-interactive and
+     out of the tab order while closed. */
   header nav .nav-sections .nav-megamenu {
-    display: none;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] .nav-megamenu {
     display: flex;
     flex-wrap: wrap;
     gap: 24px 48px;
@@ -704,6 +709,21 @@ header nav .nav-back {
     border-top: 1px solid var(--hairline);
     box-shadow: var(--hairline) 0 12px 16px -8px;
     white-space: normal;
+
+    /* closed state — hidden + lifted; rapid animation on open/close */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] .nav-megamenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
   }
 
   /* Each column is a flex column with a single uniform gap, so every child —
@@ -1049,5 +1069,37 @@ header nav .nav-tools a:focus-visible {
 @media (width >= 900px) {
   header nav .nav-tools .default-content-wrapper p:nth-child(2) {
     display: none;
+  }
+}
+
+/* Narrow desktop band (900–990px): the full desktop nav (brand + 5 mega-menu
+   triggers + search pill + Log In) has an intrinsic width of ~955px, so between
+   the 900px desktop breakpoint and ~955px it overflowed the viewport (horizontal
+   scrollbar). Rather than push the mobile hamburger up to 990px — which would
+   drop the mega menu on common tablet-landscape widths, unlike the source —
+   reclaim the needed ~55px here: shrink the search input, tighten the nav gap
+   and inline padding. The search stays fully usable (it expands on focus). */
+@media (900px <= width < 990px) {
+  header nav {
+    gap: 0 20px;
+    padding: 0 20px;
+  }
+
+  header nav .nav-tools {
+    gap: 12px;
+  }
+
+  header nav .nav-search {
+    padding: 0 6px 0 12px;
+  }
+
+  header nav .nav-search-input {
+    width: 96px;
+  }
+
+  /* Let the search pill grow back to a comfortable width when the user focuses
+     it, so typing a query isn't cramped on these narrow desktop widths. */
+  header nav .nav-search:focus-within .nav-search-input {
+    width: 150px;
   }
 }

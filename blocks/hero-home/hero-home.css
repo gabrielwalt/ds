@@ -119,7 +119,12 @@
   min-height: 300px;
   align-items: flex-start;
   justify-content: center;
-  padding: 48px max(24px, calc((100% - var(--content-max-width)) / 2));
+
+  /* Left/right padding aligns the title + CTA with the page content width (the
+     hero itself is full-bleed). Extra BOTTOM padding leaves room for the promo
+     cards that overlap the hero's lower edge (-72px), so the title/CTA never
+     collide with them. */
+  padding: 48px max(24px, calc((100% - var(--content-max-width)) / 2)) 96px;
   background-color: rgb(1 33 92); /* deep brand blue base behind the photo */
 }
 
@@ -142,6 +147,7 @@
 
 .hero-home.shop > div:last-child {
   margin: 0;
+  width: 100%;
   max-width: var(--content-max-width);
   text-align: left;
 }
@@ -153,9 +159,14 @@
   text-align: left;
 }
 
-/* CTA promoted to a filled blue pill button by the parser (<strong><a>). */
+/* CTA promoted to a filled blue pill button by the parser (<strong><a>). EDS
+   wraps a lone-link paragraph in .button-wrapper (or .button-container) with a
+   default that both centers the text AND applies large auto/horizontal margins
+   — both must be reset so the CTA lines up flush-left under the title. */
+.hero-home.shop .button-wrapper,
 .hero-home.shop .button-container {
-  margin-top: 24px;
+  width: 100%;
+  margin: 24px 0 0;
   text-align: left;
 }
 

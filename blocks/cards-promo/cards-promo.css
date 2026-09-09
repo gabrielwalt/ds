@@ -8,38 +8,66 @@
 
 /* ---- Section-level row across the sibling card blocks ----
  * On the Shop page the hero-home block and the three cards-promo blocks share
- * ONE EDS section. So the flex row is built here but the hero wrapper is forced
- * to span full width (its own row) while the promo cards form the row beneath —
- * matching the source, where the promo cards overlap the hero's lower edge. */
+ * ONE EDS section. The section is a flex row so the three promo cards sit
+ * 3-across; the hero-home-wrapper spans the full row and FULL-BLEEDS the
+ * viewport (its own .hero-home-wrapper rule already zeroes max-width/padding),
+ * while the cards row is inset to the content width and pulled UP to overlap
+ * the hero — see the shared `.hero-overlap` rules in hero-home.css. */
 main .section.cards-promo-container {
+  /* the horizontal inset that centres content to the page content width.
+     Uses 100vw (not 100%) so the value is identical whether read on the section
+     or substituted onto a child — a `100%`-based gutter re-resolves against the
+     child's own (padded) box and comes out wrong. */
+  --promo-gutter: max(24px, calc((100vw - var(--content-max-width)) / 2));
+
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: stretch;
   gap: var(--grid-gap);
-  padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
+
+  /* Inset the section to the page content width so the promo cards row aligns
+     with the rest of the page. The hero then BREAKS OUT of this inset to the
+     viewport edges (below). */
+  padding-inline: var(--promo-gutter);
 }
 
-/* Hero shares the section but must NOT be a flex card — full-width own row. */
+/* Hero shares the section but FULL-BLEEDS the viewport. It breaks out of the
+   section's inline padding with a negative margin exactly equal to that padding
+   on each side, so it reaches both viewport edges. flex-basis is forced to
+   `auto` (with grow) so the negative margins stretch it edge-to-edge, and the
+   base `.hero-home-wrapper { max-width/margin: 0 !important }` is overridden
+   here (its 100% max-width = the padded box, and its margin:0 would cancel the
+   break-out). The hero's own internal padding (.hero-home.shop) re-aligns the
+   title/CTA with the page content. */
 main .section.cards-promo-container > .hero-home-wrapper {
   flex: 1 1 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
+  margin-inline: calc(-1 * var(--promo-gutter)) !important;
+  max-width: none !important;
 }
 
 main .section.cards-promo-container > .cards-promo-wrapper {
   display: flex;
   flex: 1 1 100%;
   max-width: none;
-  margin: 0;
   padding: 0;
+
+  /* Lift every card wrapper by the shared --hero-overlap so the whole wrapped
+     flex row rises over the hero together (the shared `+`-based rule only lifts
+     the first wrapper, which suits a single-wrapper carousel but not this
+     3-across row). z-index keeps the cards above the hero. */
+  margin: calc(-1 * var(--hero-overlap)) 0 0;
+  position: relative;
+  z-index: 1;
 }
 
 @media (width >= 600px) {
+  /* Three equal cards fill the inset row exactly: (row width − the two gaps)/3.
+     This makes the first card's left edge sit on the content gutter (aligned
+     with the hero title) instead of being pushed in by centered slack. */
   main .section.cards-promo-container > .cards-promo-wrapper {
-    flex: 1 1 calc(33.333% - var(--grid-gap));
-    max-width: calc(33.333% - var(--grid-gap));
+    flex: 1 1 calc((100% - 2 * var(--grid-gap)) / 3);
+    max-width: calc((100% - 2 * var(--grid-gap)) / 3);
   }
 }
 
@@ -121,16 +149,18 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   border-radius: var(--radius-pill);
   font-size: var(--button-font-size);
   font-weight: var(--button-font-weight);
-  color: var(--text-color); /* source: dark label on white outline pill */
+  color: var(--brand-blue); /* blue label on the white outline pill */
   text-decoration: none;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Trailing arrow — blue (inherits currentColor from the blue CTA text) and a
+   touch larger than the text for emphasis. */
 .cards-promo .cards-promo-cta:any-link::after {
   content: "";
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 1.35em;
+  height: 1.35em;
   background-color: currentcolor;
   mask: var(--icon-arrow-right) center / contain no-repeat;
   transition: transform 0.2s ease;

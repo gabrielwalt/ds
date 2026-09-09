@@ -13,8 +13,12 @@
   --page-bg: #fafafa;                    /* default page/body background (off-white) */
   --text-color: rgb(8 10 12);            /* #080a0c */
   --text-muted: rgb(72 89 107);          /* #48596b — body on light cards */
+  --label-color: rgb(96 118 144);        /* #607690 — eyebrows, sub-labels, muted glyphs */
   --link-color: rgb(8 10 12);
   --link-hover-color: rgb(15 98 254);    /* brand blue */
+
+  /* hairline divider used between stacked rows/columns (nav, footer, panels) */
+  --hairline: rgb(0 0 0 / 8%);
 
   /* ---- Brand palette ---- */
   --brand-blue: rgb(15 98 254);          /* #0f62fe primary accent */
@@ -52,6 +56,7 @@
   --eyebrow-size: 16px;
   --eyebrow-weight: 600;
   --eyebrow-letter-spacing: 0.8px;
+  --cta-font-size: 18px;   /* text-link CTAs ("Learn more", "View more", …) */
 
   /* ---- Spacing & layout (unified section spacing model) ----
    * Every content section uses the SAME vertical rhythm so sections with
@@ -83,13 +88,14 @@
   --button-font-weight: 600;
 
   /* ---- Header / nav ---- */
-  --nav-link-color: rgb(51 63 76);
+  --nav-link-color: var(--section-dark-bg);  /* dark slate — same as section dark */
   --nav-link-weight: 500;
-  --nav-login-bg: rgb(51 63 76);   /* dark slate pill */
+  --nav-login-bg: var(--section-dark-bg);    /* dark slate pill */
+  --nav-mega-list-gap: 8px;   /* uniform vertical rhythm between mega-menu items */
 
   /* mega-menu featured box backgrounds (per source, vary by menu) */
-  --nav-featured-blue-bg: rgb(1 59 168);   /* Why DS sustainability box */
-  --nav-featured-grey-bg: rgb(238 238 238); /* Support box */
+  --nav-featured-blue-bg: rgb(1 59 168);            /* Why DS sustainability box */
+  --nav-featured-grey-bg: var(--section-grey-soft-bg); /* Support box — #eee */
 
   /* ---- Footer ---- */
   --footer-bg: rgb(25 30 36);      /* #191e24 near-black */
@@ -98,7 +104,7 @@
   --footer-accent: rgb(255 167 2); /* #ffa702 orange accent links */
   --footer-muted: rgb(194 204 214); /* #c2ccd6 copyright */
   --footer-divider: rgb(255 255 255 / 15%);
-  --footer-social-icon: rgb(250 250 250); /* white brand glyphs (fb/insta/li) */
+  --footer-social-icon: var(--section-light-text); /* white brand glyphs (fb/insta/li) */
 
   /* ---- Icons ---- */
 

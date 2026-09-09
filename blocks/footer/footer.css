@@ -222,7 +222,15 @@ footer .footer .section:nth-child(3) p:last-child a:not(:last-child)::after {
     border-bottom: 1px solid var(--footer-divider);
   }
 
-  footer .footer .footer-col-accordion > h3 {
+  /* Non-accordion column (Contact, single link): match the accordion heading
+     rhythm so its title lines up with the collapsible ones above it. */
+  footer .footer .section:first-child > div:not(.footer-col-accordion) h3 {
+    margin: 0;
+    padding: 16px 0 4px;
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  footer .footer .footer-col-accordion h3 {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -232,7 +240,7 @@ footer .footer .section:nth-child(3) p:last-child a:not(:last-child)::after {
   }
 
   /* down-chevron that flips when the column is open */
-  footer .footer .footer-col-accordion > h3::after {
+  footer .footer .footer-col-accordion h3::after {
     content: '';
     width: 18px;
     height: 18px;
@@ -243,16 +251,16 @@ footer .footer .section:nth-child(3) p:last-child a:not(:last-child)::after {
     transition: transform 0.2s ease;
   }
 
-  footer .footer .footer-col-accordion[aria-expanded='true'] > h3::after {
+  footer .footer .footer-col-accordion[aria-expanded='true'] h3::after {
     transform: rotate(-90deg);
   }
 
   /* collapse the link list until the column is expanded */
-  footer .footer .footer-col-accordion > ul {
+  footer .footer .footer-col-accordion ul {
     display: none;
   }
 
-  footer .footer .footer-col-accordion[aria-expanded='true'] > ul {
+  footer .footer .footer-col-accordion[aria-expanded='true'] ul {
     display: block;
     padding-bottom: 12px;
   }

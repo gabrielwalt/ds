@@ -143,10 +143,23 @@ export default async function decorate(block) {
   });
 
   const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
+  const brandLink = navBrand.querySelector('.button') || navBrand.querySelector('a');
   if (brandLink) {
     brandLink.className = '';
-    brandLink.closest('.button-container').className = '';
+    const container = brandLink.closest('.button-container');
+    if (container) container.className = '';
+    // Inject the DS logo from the code repo. The SVG (~55KB) is NOT embedded in
+    // the nav fragment because DA rejects fragment images over 40KB; the
+    // fragment carries only the accessible brand text, which we swap for the
+    // logo <img> here. Alt text comes from the link's original text.
+    const alt = brandLink.textContent.trim() || 'Dentsply Sirona';
+    brandLink.textContent = '';
+    const logo = document.createElement('img');
+    logo.src = '/icons/ds-logo.svg';
+    logo.alt = alt;
+    logo.className = 'nav-brand-logo';
+    logo.loading = 'eager';
+    brandLink.append(logo);
   }
 
   // Search bar (like the source): a rounded pill with a leading magnifying-

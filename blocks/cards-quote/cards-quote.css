@@ -135,7 +135,7 @@ main .section.cards-quote-container > .cards-quote-wrapper {
   gap: 4px; /* source: 4px between label and trailing arrow */
   padding: 8px 4px;
   color: var(--brand-chartreuse);
-  font-size: 18px; /* source CTA label renders at 18px (larger than body) */
+  font-size: var(--cta-font-size);
   font-weight: 600;
   line-height: 26px;
   text-decoration: none;

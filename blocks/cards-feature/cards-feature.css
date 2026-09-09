@@ -252,10 +252,28 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
   align-items: center;
   gap: 6px;
   margin-top: 16px; /* close to the description text */
-  font-size: 18px; /* source CTA is 18px / 600 */
+  font-size: var(--cta-font-size);
   font-weight: 600;
   color: var(--brand-blue);
   text-decoration: none;
+}
+
+/* ---- §9 "Didn't find what you need? Let's connect" — the ONLY plain
+   cards-feature section (no dark/blue/grey-soft variant). The source renders
+   these icon cards with NO surface (transparent, same as the section) and
+   aligns every card's CTA on a common baseline at the card bottom. */
+main .section.cards-feature-container:not(.dark, .blue, .grey-soft)
+  .cards-feature > ul > li:not(:has(.cards-feature-card-image)) {
+  background-color: transparent;
+  border-radius: 0;
+}
+
+/* Pin the CTA paragraph to the bottom of the (flex-column) card body so the
+   links line up horizontally regardless of description length. */
+/* stylelint-disable-next-line no-descending-specificity */
+main .section.cards-feature-container:not(.dark, .blue, .grey-soft)
+  .cards-feature-card-body p:last-child:has(> a:only-child) {
+  margin-top: auto;
 }
 
 /* trailing arrow — the source "ArrowRightRegular" SVG glyph, masked so it
@@ -279,6 +297,7 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
 }
 
 /* CTA paragraph sits just below the description (not pushed to the bottom). */
+/* stylelint-disable-next-line no-descending-specificity */
 .cards-feature .cards-feature-card-body > p:last-child:has(> a:only-child) {
   margin-top: 16px;
   padding-top: 0;
@@ -292,10 +311,12 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
  * left-aligned with light heading text and muted-light body text. Selectors are
  * scoped under the section variant and given enough specificity to beat the
  * base icon-card rule above. */
+/* stylelint-disable-next-line no-descending-specificity */
 main .section.dark .cards-feature > ul > li:not(:has(.cards-feature-card-image)) {
   background-color: var(--card-bg-dark); /* rgb(41 51 61) source dark tile */
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 main .section.blue .cards-feature > ul > li:not(:has(.cards-feature-card-image)) {
   background-color: rgb(0 80 230); /* source blue-banner iconcard tile */
 }
@@ -308,8 +329,8 @@ main .section.blue .cards-feature .cards-feature-card-body h6 {
   color: var(--section-light-text);
 }
 
-main .section.dark .cards-feature .cards-feature-card-body p,
-main .section.blue .cards-feature .cards-feature-card-body p {
+/* stylelint-disable-next-line no-descending-specificity */
+main .section.dark .cards-feature .cards-feature-card-body p, main .section.blue .cards-feature .cards-feature-card-body p {
   color: var(--section-muted-text);
 }
 

@@ -116,7 +116,7 @@ main .section .hero-home-wrapper + .carousel-promo-wrapper {
   line-height: 1.2;
   letter-spacing: var(--eyebrow-letter-spacing);
   text-transform: uppercase;
-  color: rgb(96 118 144);
+  color: var(--label-color);
 }
 
 /* title -- prefixed with `main .section` so the card title stays dark even
@@ -159,7 +159,7 @@ main .section .carousel-promo .carousel-promo-slide-content h6 {
 /* tertiary / text CTA (with → arrow) — transparent, dark text, hugs content */
 .carousel-promo .carousel-promo-cta-tertiary a {
   padding: 8px 4px;
-  font-size: 18px;
+  font-size: var(--cta-font-size);
   color: var(--text-color);
   background-color: transparent;
 }
@@ -243,6 +243,12 @@ main .section .carousel-promo .carousel-promo-slide-content h6 {
   box-shadow: rgb(0 0 0 / 12%) 0 2px 6px 0;
   cursor: pointer;
   transition: background-color 0.2s;
+}
+
+/* JS hides the prev arrow at the start / next arrow at the end (source
+   behaviour). [hidden] must beat the button's own display. */
+.carousel-promo .carousel-promo-navigation-buttons button[hidden] {
+  display: none;
 }
 
 .carousel-promo .carousel-promo-navigation-buttons button:hover,

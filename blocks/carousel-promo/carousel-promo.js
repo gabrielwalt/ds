@@ -50,6 +50,20 @@ function updateActiveSlide(slide) {
   });
 }
 
+// Hide the prev arrow at the far-left of the track and the next arrow at the
+// far-right, matching the source (which shows only the forward arrow at the
+// start). Driven by the track's scroll position so it is correct regardless of
+// how many slides are in view (1 mobile / 2 tablet / 3 desktop).
+function updateArrows(block) {
+  const track = block.querySelector('.carousel-promo-slides');
+  const prev = block.querySelector('.slide-prev');
+  const next = block.querySelector('.slide-next');
+  if (!track) return;
+  const maxScroll = track.scrollWidth - track.clientWidth;
+  if (prev) prev.hidden = track.scrollLeft <= 1;
+  if (next) next.hidden = track.scrollLeft >= maxScroll - 1;
+}
+
 export function showSlide(block, slideIndex = 0) {
   const slides = block.querySelectorAll('.carousel-promo-slide');
   let realSlideIndex = slideIndex < 0 ? slides.length - 1 : slideIndex;
@@ -90,6 +104,21 @@ function bindEvents(block) {
   block.querySelectorAll('.carousel-promo-slide').forEach((slide) => {
     slideObserver.observe(slide);
   });
+
+  // Prev/next arrow visibility tracks the track's scroll position.
+  const track = block.querySelector('.carousel-promo-slides');
+  if (track) {
+    track.addEventListener('scroll', () => updateArrows(block), { passive: true });
+    window.addEventListener('resize', () => updateArrows(block));
+    // Recompute once layout has settled (slide widths depend on lazy images);
+    // a bare initial call can run while scrollWidth still equals clientWidth.
+    requestAnimationFrame(() => updateArrows(block));
+    window.addEventListener('load', () => updateArrows(block));
+    // Re-measure when the track itself resizes (images arriving, font swap).
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(() => updateArrows(block)).observe(track);
+    }
+  }
 }
 
 function createSlide(row, slideIndex, carouselId) {

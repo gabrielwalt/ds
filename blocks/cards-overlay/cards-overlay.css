@@ -24,6 +24,8 @@ main .section.cards-overlay-container {
    the grid gap — keeping the effective title→cards gap equal to other sections. */
 main .section.cards-overlay-container > .default-content-wrapper {
   grid-column: 1 / -1;
+  justify-self: stretch; /* fill the full spanned width, not shrink-to-content */
+  width: 100%;
   max-width: none;
   margin-bottom: calc(var(--section-heading-gap) - var(--grid-gap));
   padding: 0;

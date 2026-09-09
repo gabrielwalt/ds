@@ -55,9 +55,13 @@ main .section .hero-home-wrapper + .carousel-promo-wrapper {
 }
 
 /* promo cards distribute content top-to-bottom (image sits mid-card, pill last).
-   Card surface is full white (#fff), same as the course cards. */
+   Card surface is full white (#fff), same as the course cards.
+   No bottom padding (matches the source's `24px 24px 0`): the product/event
+   artwork carries its own transparent whitespace at the base, so an extra
+   bottom gutter only made the card feel taller. */
 .carousel-promo .carousel-promo-slide-promo {
   justify-content: space-between;
+  padding-bottom: 0;
 }
 
 /* --- image --- */
@@ -77,15 +81,17 @@ main .section .hero-home-wrapper + .carousel-promo-wrapper {
   border-radius: var(--radius-image);
 }
 
-/* promo cards: the source renders the product tile at ~374x298 (5:4) and
-   object-fit COVERs it (the natural rendition is a ~300x300 square, restored
-   from the wide wid=2000 strip by toNaturalTileUrl in carousel-promo.js), so
-   the product fills the image box like the source instead of shrinking to a
-   thin sliver. */
+/* promo cards: the product/event tile comes from a ~300x300 square natural
+   rendition (restored by toNaturalTileUrl in carousel-promo.js). Use
+   `object-fit: contain` so the WHOLE artwork stays visible with no cropping —
+   the first card's DSW globe is a circular logo that must not be clipped — and
+   cap the box height. The reduced max-height (was 298px) trims the vertical
+   space the image occupies, so the cards are more compact and closer to the
+   source's proportions while every tile still shows in full. */
 .carousel-promo .carousel-promo-slide-promo .carousel-promo-slide-image img {
   aspect-ratio: 5 / 4;
-  max-height: 298px;
-  object-fit: cover;
+  max-height: 220px;
+  object-fit: contain;
 }
 
 /* --- content --- */

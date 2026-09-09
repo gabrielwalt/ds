@@ -23,15 +23,16 @@ header nav {
   align-items: center;
   gap: 0 24px;
 
-  /* Use the SAME content-width container as the page + footer (styles.css
-     `main > .section > div`): content-max-width + auto side margins + a 24px
-     (desktop 32px) inline gutter — so the logo's left edge and the Log In
-     button's right edge line up exactly with the page content edges, instead
-     of the nav defining its own narrower width. */
-  margin: auto;
-  max-width: var(--content-max-width);
+  /* Use the SAME shared content-width container as the page sections + footer:
+     a full-width element with an inline gutter of
+     `max(24px, (100% - content-max-width)/2)` (32px floor at desktop). This
+     centres content to --content-max-width and, on wide viewports, puts the
+     content edge exactly where the footer columns, hero and section content
+     sit — so the logo's left edge and the Log In button's right edge align
+     precisely with the main page content area. */
   height: var(--nav-height);
-  padding: 0 24px;
+  padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
+  padding-block: 0;
   font-family: var(--body-font-family);
 }
 
@@ -66,9 +67,9 @@ header nav[aria-expanded='true'] {
     justify-content: space-between;
     gap: 0 32px;
 
-    /* max-width stays var(--content-max-width) from the base rule; only the
-       inline gutter grows to 32px at desktop, matching the page content. */
-    padding: 0 32px;
+    /* Desktop: 32px gutter floor (matches the page/footer container), still
+       centring content to --content-max-width via the same max() formula. */
+    padding-inline: max(32px, calc((100% - var(--content-max-width)) / 2));
   }
 
   header nav[aria-expanded='true'] {

@@ -8,15 +8,22 @@
  * product renders tiny. The source uses the bare URL (`?ts=…&$transparent-
  * image$&dpr=off`) which returns the natural ~300x300 square. Dropping the
  * `wid`/`hei`/`fmt`/`dpr` params restores that square. Keeps other params.
+ *
+ * Edits the query string with a regex rather than URL/URLSearchParams: the
+ * latter parses `$transparent-image$` as a param key and percent-encodes it to
+ * `%24transparent-image%24` on serialise, which Scene7 does NOT recognise as
+ * the preset — it then falls back to a 330x400 PORTRAIT rendition that
+ * `object-fit:cover` crops (cutting off the DSW globe artwork). Preserving the
+ * literal `$transparent-image$` token keeps the intended 300x300 square.
  */
 function toNaturalTileUrl(src) {
-  try {
-    const u = new URL(src, window.location.href);
-    ['wid', 'hei', 'fmt', 'dpr'].forEach((param) => u.searchParams.delete(param));
-    return u.toString();
-  } catch (e) {
-    return src;
-  }
+  // Remove wid/hei/fmt/dpr params (with their values) anywhere in the query,
+  // then tidy up any resulting doubled/leading/trailing separators.
+  return src
+    .replace(/([?&])(?:wid|hei|fmt|dpr)=[^&]*/gi, '$1')
+    .replace(/&{2,}/g, '&')
+    .replace(/[?&]&/g, (m) => m[0])
+    .replace(/[?&]$/g, '');
 }
 
 function updateActiveSlide(slide) {
@@ -135,6 +142,31 @@ function bindEvents(block) {
   }
 }
 
+// Titles that the source authored across two lines with an explicit <br>. The
+// EDS content pipeline flattens a heading to a single line (markdown headings
+// can't hold a <br>), so re-insert the authored break at the phrase boundary.
+// Keyed on the leading phrase so only the intended title is affected; other
+// cards keep their single-line titles.
+const TITLE_LINE_BREAKS = [
+  { lead: 'Dentsply Sirona World', rest: 'Las Vegas 2026' },
+];
+
+function restoreTitleLineBreak(heading) {
+  // Only act on plain single-text-node titles (no inline markup to disturb).
+  if (heading.childElementCount > 0) return;
+  const text = heading.textContent.replace(/\s+/g, ' ').trim();
+  const match = TITLE_LINE_BREAKS.find(
+    (t) => text === `${t.lead} ${t.rest}`,
+  );
+  if (!match) return;
+  heading.textContent = '';
+  heading.append(
+    document.createTextNode(match.lead),
+    document.createElement('br'),
+    document.createTextNode(match.rest),
+  );
+}
+
 function createSlide(row, slideIndex, carouselId) {
   const slide = document.createElement('li');
   slide.dataset.slideIndex = slideIndex;
@@ -188,6 +220,7 @@ function createSlide(row, slideIndex, carouselId) {
 
   const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
   if (labeledBy) {
+    restoreTitleLineBreak(labeledBy);
     slide.setAttribute('aria-labelledby', labeledBy.getAttribute('id'));
   }
 

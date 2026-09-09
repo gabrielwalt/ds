@@ -81,13 +81,19 @@ footer .footer .section:first-child li a {
 
 /* Accent items are authored with <em> in the fragment. footer.js unwraps them
    and adds .footer-link-accent, but as a fallback (e.g. if the DA round-trip
-   leaves the <em> in place) render any footer <em> as the orange accent —
-   never italic. */
-footer .footer em {
+   leaves the <em> in place, or JS hasn't run yet) render any footer <em> as the
+   orange accent — never italic. Also target a link INSIDE an <em>
+   (`<em><a>…</a></em>`, the shape EDS flattens to): a bare `footer em` rule
+   doesn't reach the link because the link's own colour rule wins, so colour the
+   nested <a> explicitly. */
+/* stylelint-disable no-descending-specificity */
+footer .footer em,
+footer .footer em a:any-link {
   color: var(--footer-accent);
   font-weight: 400; /* source: accent links are orange but NOT bold */
   font-style: normal;
 }
+/* stylelint-enable no-descending-specificity */
 
 /* stylelint-disable-next-line no-descending-specificity */
 footer .footer a:hover, footer .footer a:focus-visible {
@@ -144,6 +150,12 @@ footer .footer a.footer-link-accent:hover,
 footer .footer a.footer-link-accent:focus-visible {
   color: var(--footer-accent);
   text-decoration: underline;
+}
+
+/* "Contact us" is the one accent link the source renders BOLD as well as orange
+   (it carries the phone glyph). Override the accent weight for that link. */
+footer .footer a.footer-link-accent.footer-link-phone {
+  font-weight: 600;
 }
 
 /* ---- Section 2: locale + social (divider above) ----

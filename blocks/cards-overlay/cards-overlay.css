@@ -113,8 +113,18 @@ main .section.cards-overlay-container > .cards-overlay-wrapper {
   margin: 0;
 }
 
-/* --- CTA link "Mehr anzeigen" --- */
-.cards-overlay .cards-overlay-content a.cards-overlay-cta:any-link {
+/* --- CTA link "Mehr anzeigen" ---
+   `.cards-overlay-cta` is a GENERATED wrapper (added by the block JS) around the
+   authored <p><a>; the layout class lives on the wrapper, not the editable <a>,
+   so it survives the WYSIWYG editor's mid-session rebuild of authored elements.
+   Target the link as a descendant of the wrapper, and zero the wrapper + inner
+   authored <p> margins so the CTA hugs its content. */
+.cards-overlay .cards-overlay-content .cards-overlay-cta,
+.cards-overlay .cards-overlay-content .cards-overlay-cta > p {
+  margin: 0;
+}
+
+.cards-overlay .cards-overlay-content .cards-overlay-cta a:any-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -130,7 +140,7 @@ main .section.cards-overlay-container > .cards-overlay-wrapper {
   text-decoration: none;
 }
 
-.cards-overlay .cards-overlay-content a.cards-overlay-cta:any-link::after {
+.cards-overlay .cards-overlay-content .cards-overlay-cta a:any-link::after {
   content: ""; /* source ArrowRightRegular glyph, masked */
   display: inline-block;
   width: 18px;
@@ -139,7 +149,7 @@ main .section.cards-overlay-container > .cards-overlay-wrapper {
   mask: var(--icon-arrow-right) center / contain no-repeat;
 }
 
-.cards-overlay .cards-overlay-content a.cards-overlay-cta:hover {
+.cards-overlay .cards-overlay-content .cards-overlay-cta a:hover {
   color: rgb(255 255 255);
   text-decoration: none;
 }

@@ -91,6 +91,11 @@ main .section .hero-home-wrapper + .carousel-promo-wrapper {
   aspect-ratio: 5 / 4;
   max-height: 220px;
   object-fit: contain;
+
+  /* Zoom the displayed artwork 1.5x WITHOUT resizing the <img> layout box:
+     `transform: scale()` scales the painted pixels only, so the element keeps
+     its box (and the card layout is unaffected) while the tile reads larger. */
+  transform: scale(1.5);
 }
 
 /* --- content --- */

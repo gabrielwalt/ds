@@ -52,15 +52,21 @@ export default function decorate(block) {
     while (contentCell.firstElementChild) contentDiv.append(contentCell.firstElementChild);
   }
 
-  // Undo EDS auto button decoration so the CTA renders as a plain overlay link.
-  contentDiv.querySelectorAll('a.button').forEach((a) => {
+  // CTA: strip any EDS auto-button decoration (so it renders as a plain overlay
+  // link), then move the authored paragraph/link INTACT into a generated
+  // `.cards-overlay-cta` wrapper. The layout class lives on the wrapper, never
+  // on the editable <a>/<p> — so it survives the WYSIWYG editor rebuilding the
+  // authored element mid-session (the CSS targets `.cards-overlay-cta a`).
+  contentDiv.querySelectorAll('a').forEach((a) => {
     a.classList.remove('button', 'primary', 'secondary', 'accent');
-    a.classList.add('cards-overlay-cta');
-    const p = a.closest('.button-container');
-    if (p) p.classList.remove('button-container');
-  });
-  contentDiv.querySelectorAll('a:not(.cards-overlay-cta)').forEach((a) => {
-    a.classList.add('cards-overlay-cta');
+    if (a.classList.length === 0) a.removeAttribute('class');
+    const authored = a.closest('p') || a;
+    if (authored.parentElement && authored.parentElement.classList.contains('cards-overlay-cta')) return;
+    authored.classList.remove('button-container');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cards-overlay-cta';
+    authored.replaceWith(wrapper);
+    wrapper.append(authored);
   });
 
   card.append(imageDiv, contentDiv);

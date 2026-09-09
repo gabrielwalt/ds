@@ -31,11 +31,17 @@ function decorateLinks(footer) {
     const href = a.getAttribute('href') || '';
 
     // Accent links are flagged in the fragment with <em> (portable across DA):
-    // unwrap the emphasis and colour the whole link via a class instead.
-    const em = a.querySelector('em');
-    if (em) {
+    // colour the whole link via a class, then unwrap the emphasis. The <em>
+    // can sit EITHER inside the link (`<a><em>…</em></a>`, the shape the local
+    // dev server serves) OR wrap it (`<em><a>…</a></em>`, the shape the EDS
+    // content pipeline flattens to). Handle both so the accent colour applies
+    // identically in local preview and on the deployed site.
+    const innerEm = a.querySelector('em');
+    const wrappingEm = a.parentElement && a.parentElement.tagName === 'EM' ? a.parentElement : null;
+    if (innerEm || wrappingEm) {
       a.classList.add('footer-link-accent');
-      em.replaceWith(...em.childNodes);
+      if (innerEm) innerEm.replaceWith(...innerEm.childNodes);
+      if (wrappingEm) wrappingEm.replaceWith(...wrappingEm.childNodes);
     }
 
     // Social links → white brand glyph (keep the text as an aria-label).

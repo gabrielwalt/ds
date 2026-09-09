@@ -70,7 +70,7 @@
   --section-heading-gap: 40px;
   --card-padding: 24px;         /* inner padding on every card surface */
   --card-title-gap: 8px;        /* gap between a card title and its description */
-  --card-cta-gap: 16px;         /* gap between the description and the card CTA */
+  --card-cta-gap: 20px;         /* gap between the description and the card CTA */
   --grid-gap: 24px;
   --nav-height: 72px;
 

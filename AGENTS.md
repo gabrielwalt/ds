@@ -11,6 +11,27 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 - Scope CSS to `.blockname`; `-wrapper`/`-container` are section classes.
 - `fragment/fragment.js` is the only cross-block import. Otherwise use `/scripts/`.
 
+## CSS selectors — keep them short, structural, low-specificity
+- Prefer a class tied to block structure or a meaningful variant. If layout
+  needs to target an element the markup doesn't name (e.g. "the CTA paragraph"),
+  add a generated wrapper class in `decorate()` (moving the authored element in
+  whole — see the Experience Workspace rules) and style that. Don't reach for a
+  clever selector to avoid a one-line JS change.
+- Avoid `:last-child` / `:first-child`, `:has()`, `:not(...)`, `nth-*`, and
+  attribute matches for **layout**, and avoid section-background combinations
+  (`.section.dark:not(.blue) …`) as layout hooks. They break when authors add,
+  remove, reorder, or re-style content. Use them only with a strong structural
+  reason, and say why in a comment.
+- Model spacing as **default + variant override**: define the generic value on
+  the block (or a design-system token like `--card-cta-gap`); a variant sets its
+  own value only when it genuinely differs, on the same class — not via a longer
+  descendant chain. A `margin-top: auto` bottom-pin is a no-op when content fills
+  the box, so prefer it over per-section `:has()`/`:not()` gymnastics.
+- Keep specificity flat: `.block .part`, not
+  `main .section.x-container:not(.a,.b) .block > ul > li:last-child:has(> a)`.
+  If you need `stylelint-disable no-descending-specificity`, treat it as a smell
+  and reconsider the structure first.
+
 ## Outdated
 - `fstab.yaml`, `helix-query.yaml`, `paths.json` are retired. Config lives at tools.aem.live.
 

@@ -29,18 +29,18 @@ export default function decorate(block) {
 
   if (contentCell) {
     // First paragraph = eyebrow label; heading = title; anchor = CTA pill.
+    // The label and CTA are styled via stable generated wrappers/positions
+    // (`.cards-promo-body > p:first-child`, `.cards-promo-cta-wrap > a`), NOT a
+    // class on the authored <p>/<a> — a runtime class on an editable element is
+    // lost when the WYSIWYG editor rebuilds it mid-session.
     const label = contentCell.querySelector('p');
-    if (label) {
-      label.className = 'cards-promo-label';
-      bodyDiv.append(label);
-    }
+    if (label) bodyDiv.append(label);
     const heading = contentCell.querySelector('h1, h2, h3, h4, h5, h6');
     if (heading) bodyDiv.append(heading);
 
     const link = contentCell.querySelector('a');
     if (link) {
       link.classList.remove('button', 'primary', 'secondary', 'accent');
-      link.classList.add('cards-promo-cta');
       const container = link.closest('.button-container');
       if (container) container.classList.remove('button-container');
       // Image sits between the title block and the CTA.

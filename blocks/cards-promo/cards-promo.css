@@ -103,8 +103,11 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   align-items: center;
 }
 
-/* Eyebrow label (source: 14px, dark-slate, uppercase, 0.8px tracking) */
-.cards-promo .cards-promo-label {
+/* Eyebrow label (source: 14px, dark-slate, uppercase, 0.8px tracking).
+   Targeted as the body's first paragraph (a generated wrapper + position)
+   rather than a class on the authored <p>, so the styling survives the editor
+   rebuilding that paragraph mid-edit. */
+.cards-promo .cards-promo-body > p:first-child {
   margin: 0 0 12px;
   font-family: var(--body-font-family);
   font-size: 14px;
@@ -142,13 +145,16 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   object-fit: contain;
 }
 
-/* CTA pill — pinned to the card bottom so CTAs align across cards */
+/* CTA pill — pinned to the card bottom so CTAs align across cards. The pill is
+   styled via the GENERATED `.cards-promo-cta-wrap` wrapper + its child <a>, not
+   a class on the authored link, so the editor rebuilding the link mid-edit
+   can't strip the button styling. */
 .cards-promo .cards-promo-cta-wrap {
   margin-top: auto;
   width: 100%;
 }
 
-.cards-promo .cards-promo-cta:any-link {
+.cards-promo .cards-promo-cta-wrap > a:any-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -167,7 +173,7 @@ main .section.cards-promo-container > .cards-promo-wrapper {
 
 /* Trailing arrow — blue (inherits currentColor from the blue CTA text) and a
    touch larger than the text for emphasis. */
-.cards-promo .cards-promo-cta:any-link::after {
+.cards-promo .cards-promo-cta-wrap > a:any-link::after {
   content: "";
   display: inline-block;
   width: 1.35em;
@@ -177,11 +183,11 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   transition: transform 0.2s ease;
 }
 
-.cards-promo .cards-promo-cta:hover {
+.cards-promo .cards-promo-cta-wrap > a:hover {
   background-color: var(--brand-blue);
   color: var(--section-light-text);
 }
 
-.cards-promo .cards-promo-cta:hover::after {
+.cards-promo .cards-promo-cta-wrap > a:hover::after {
   transform: translateX(3px);
 }

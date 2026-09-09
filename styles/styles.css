@@ -362,6 +362,21 @@ main > .section > .default-content-wrapper:last-child:not(:first-child) {
   margin-block: var(--section-heading-gap) 0;
 }
 
+/* ---- Default content container (THE layout-system rule) ----
+ * EVERY direct child of a section is constrained to the page content width by
+ * default: capped to --content-max-width, centred, with a fixed inline gutter
+ * (24px, 32px at desktop) that guarantees content never touches the viewport
+ * edge at narrow widths. This holds structurally for ANY authored content — an
+ * author can add, reorder or replace content freely and it stays inside the
+ * content box. Section BACKGROUNDS still span the viewport (the section itself
+ * is full-width); only this inner content box is inset.
+ *
+ * A block becomes full-width ONLY by DELIBERATELY opting out — a section that
+ * carries a full-bleed container class re-applies this same gutter on the
+ * SECTION and sets its wrappers to `max-width: none` (see cards-feature /
+ * cards-overlay), and a breakout child uses a negative inline margin equal to
+ * the gutter (see the hero). Nothing escapes by merely forgetting a class:
+ * absent any opt-out, this rule applies and keeps content aligned. */
 main > .section > div {
   max-width: var(--content-max-width);
   margin: auto;

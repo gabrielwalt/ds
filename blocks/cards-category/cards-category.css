@@ -6,33 +6,35 @@
  * the grid is built INSIDE the block (not at section level). */
 
 /* ---- Unified content box for both cards-category sections ----
- * The two sections use different container mixes: "Shop top categories" is a
- * padded FLEX row (also `cards-feature-container`, 60px section gutter, with the
- * "Build your EV" banner beside it), while "Shop top brands" is a plain BLOCK
- * section. To make the header row AND the tile grid land on the SAME content box
- * (60→1380 at desktop) in both, we cancel the categories section's own inline
- * padding and inset the header + grid wrappers themselves: capped to the content
- * width, centred, with the standard page gutter. */
-main .section.cards-feature-container.cards-category-container {
-  padding-inline: 0;
-}
-
-main .section.cards-category-container > .default-content-wrapper,
-main .section.cards-category-container > .cards-category-wrapper {
+ * The "Shop top brands" section is a plain container, so its wrappers inherit
+ * the shared default container in styles.css (`main > .section > div`) — capped
+ * to --content-max-width, centred, with the standard page gutter — and need NO
+ * override. (This is the layout-system default doing its job.)
+ *
+ * The "Shop top categories" section ALSO carries `cards-feature-container`,
+ * whose full-bleed rules put the content gutter on the SECTION
+ * (`padding-inline: max(gutter, …)`) and set the wrappers to `max-width: none`
+ * so a card row can fill the row. For the category header + tile grid we want
+ * the standard content box instead, so cap those two wrappers back to
+ * --content-max-width, centre them, and zero their inline padding (the section
+ * already supplies the gutter — leaving the default 32px padding on too would
+ * double-inset the grid). */
+main .section.cards-feature-container.cards-category-container > .default-content-wrapper,
+main .section.cards-feature-container.cards-category-container > .cards-category-wrapper {
+  /* The section is a flex row (cards-feature-container); make each wrapper span
+     the full row and fill it, then cap to the content width and centre. Without
+     `flex-basis: 100%` + `width: 100%` a flex item shrinks to its content and
+     mis-centres (the grid floated to the middle of the row). */
   flex: 1 1 100%;
   box-sizing: border-box;
   width: 100%;
   max-width: var(--content-max-width);
   margin-inline: auto;
-  padding-inline: 0;
-}
 
-/* The categories section carries BOTH container classes, so cards-feature.css's
-   `.cards-feature-container > .default-content-wrapper { max-width: none }`
-   would otherwise widen the header past the content box. Re-assert the content
-   width for that combined case (equal specificity, later source order wins). */
-main .section.cards-feature-container.cards-category-container > .default-content-wrapper {
-  max-width: var(--content-max-width);
+  /* The section already supplies the content gutter via its own
+     `padding-inline`, so zero the wrappers' inline padding to avoid
+     double-insetting the grid. */
+  padding-inline: 0;
 }
 
 .cards-category .cards-category-grid {
@@ -60,8 +62,13 @@ main .section.cards-feature-container.cards-category-container > .default-conten
   display: flex;
 }
 
-/* The tile surface: a white bordered card with a left-aligned label. */
-.cards-category .cards-category-link {
+/* The tile surface: a white bordered card with a left-aligned label.
+   Target the tile's direct child (the authored <a>, or a generated <span> when
+   there is no link) rather than a class on the <a> itself: the editor can
+   rebuild the authored link mid-edit and drop a runtime class, but the
+   generated `.cards-category-tile` wrapper is stable, so `> :first-child`
+   keeps the surface styling attached. */
+.cards-category .cards-category-tile > :first-child {
   display: flex;
   flex: 1 1 auto;
   align-items: center;
@@ -80,7 +87,7 @@ main .section.cards-feature-container.cards-category-container > .default-conten
   transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 
-a.cards-category-link:hover {
+.cards-category .cards-category-tile > a:hover {
   border-color: var(--brand-blue);
   color: var(--brand-blue);
 }
@@ -104,7 +111,7 @@ a.cards-category-link:hover {
   fill: var(--label-color);
 }
 
-a.cards-category-link:hover .cards-category-icon {
+.cards-category .cards-category-tile > a:hover .cards-category-icon {
   color: var(--brand-blue);
 }
 

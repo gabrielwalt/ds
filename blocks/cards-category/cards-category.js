@@ -34,15 +34,17 @@ export default function decorate(block) {
     const li = document.createElement('li');
     li.className = 'cards-category-tile';
 
+    // The tile surface is styled via `.cards-category-tile > :first-child`
+    // (the generated tile wrapper), NOT a class on this authored <a> — a class
+    // on the editable link would be lost when the editor rebuilds it. Strip any
+    // EDS auto-button classes so the link renders as a plain tile.
     let target;
     if (link) {
       link.classList.remove('button', 'primary', 'secondary', 'accent');
-      link.classList.add('cards-category-link');
       target = link;
     } else {
-      // No anchor — render the label text as a static tile.
+      // No anchor — render the label text as a static tile (generated span).
       const span = document.createElement('span');
-      span.className = 'cards-category-link';
       span.textContent = row.textContent.replace(/\s+/g, ' ').trim();
       if (!span.textContent) return;
       target = span;

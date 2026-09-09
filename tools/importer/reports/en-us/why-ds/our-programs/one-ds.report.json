@@ -1,0 +1,24 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/why-ds/our-programs/one-ds.html",
+  "path": "en-us/why-ds/our-programs/one-ds",
+  "timestamp": "2026-09-09T06:43:34.952Z",
+  "title": "ONE DS Loyalty Program: Rewards for Dental Professionals",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "accordion",
+    "accordion",
+    "course-teaser"
+  ]
+}

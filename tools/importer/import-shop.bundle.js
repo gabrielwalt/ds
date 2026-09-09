@@ -79,15 +79,22 @@ var CustomImportScript = (() => {
       element.replaceWith(...element.childNodes);
       return;
     }
+    const isShopHero = /cmp-shophero|cmp-hero__banner-left/.test(element.className);
+    const ctaCells = ctaLinks.map((a) => {
+      if (!isShopHero) return a;
+      const strong = document2.createElement("strong");
+      strong.append(a.cloneNode(true));
+      return strong;
+    });
     const cells = [];
     if (bgImage) cells.push([bgImage]);
     const contentCell = [];
     if (heading) contentCell.push(heading);
     if (subheading) contentCell.push(subheading);
-    contentCell.push(...ctaLinks);
+    contentCell.push(...ctaCells);
     cells.push([contentCell]);
     const block = WebImporter.Blocks.createBlock(document2, {
-      name: "hero-home",
+      name: isShopHero ? "hero-home (shop)" : "hero-home",
       cells
     });
     element.replaceWith(block);
@@ -119,8 +126,11 @@ var CustomImportScript = (() => {
     contentCell.push(...ctaLinks);
     const cells = [];
     cells.push([image || "", contentCell]);
+    let name = "cards-feature";
+    if (/cmp-shop-teaser--banner/.test(element.className)) name = "cards-feature (banner)";
+    else if (/cmp-shop-teaser--promotion/.test(element.className)) name = "cards-feature (promotion)";
     const block = WebImporter.Blocks.createBlock(document2, {
-      name: "cards-feature",
+      name,
       cells
     });
     element.replaceWith(block);

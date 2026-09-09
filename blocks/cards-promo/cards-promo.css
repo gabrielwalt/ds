@@ -43,16 +43,17 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   }
 }
 
-/* ---- The card ---- */
+/* ---- The card ---- (source .cmp-promocard__card-main: 12px radius, 1px
+   border, 16px padding, no shadow) */
 .cards-promo .cards-promo-card {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   border: 1px solid var(--card-border-light);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-image); /* 12px — source promo card */
   background-color: var(--background-color);
-  box-shadow: var(--shadow-card);
-  padding: var(--card-padding);
+  box-shadow: none;
+  padding: 16px;
   text-align: center;
 }
 
@@ -63,24 +64,24 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   align-items: center;
 }
 
-/* Eyebrow label */
+/* Eyebrow label (source: 14px, dark-slate, uppercase, 0.8px tracking) */
 .cards-promo .cards-promo-label {
   margin: 0 0 12px;
   font-family: var(--body-font-family);
-  font-size: var(--eyebrow-size);
+  font-size: 14px;
   font-weight: var(--eyebrow-weight);
   letter-spacing: var(--eyebrow-letter-spacing);
   text-transform: uppercase;
-  color: var(--label-color);
+  color: var(--section-dark-bg); /* source label colour rgb(51 63 76) */
 }
 
-/* Title */
+/* Title (source: 22px, centered) */
 .cards-promo .cards-promo-body h5,
 .cards-promo .cards-promo-body h6 {
   margin: 0;
   font-family: var(--heading-font-family);
   font-weight: var(--heading-weight);
-  font-size: var(--heading-size-s);
+  font-size: 22px;
   line-height: 1.2;
   letter-spacing: var(--heading-letter-spacing);
   color: var(--text-color);
@@ -120,7 +121,7 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   border-radius: var(--radius-pill);
   font-size: var(--button-font-size);
   font-weight: var(--button-font-weight);
-  color: var(--brand-blue);
+  color: var(--text-color); /* source: dark label on white outline pill */
   text-decoration: none;
   transition: background-color 0.2s ease, color 0.2s ease;
 }

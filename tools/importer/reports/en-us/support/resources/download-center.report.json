@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/support/resources/download-center.html",
+  "path": "en-us/support/resources/download-center",
+  "timestamp": "2026-09-09T07:08:25.654Z",
+  "title": "IFU, SDS, Instructions for Use & Safety Data Sheets USA",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "cards-feature",
+    "carousel-promo"
+  ]
+}

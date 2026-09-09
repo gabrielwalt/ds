@@ -35,16 +35,16 @@
   display: flex;
   flex: 1 1 auto;
   align-items: center;
-  gap: 12px;
+  gap: 24px; /* source spacing between glyph and label */
   min-height: 64px;
-  padding: 16px 24px;
+  padding: 12px 16px;
   border: 1px solid var(--card-border-light);
-  border-radius: var(--radius-panel);
+  border-radius: var(--radius-image); /* 12px — source tile radius */
   background-color: var(--background-color);
   font-family: var(--heading-font-family);
-  font-size: var(--heading-size-xs);
-  font-weight: var(--heading-weight);
-  letter-spacing: var(--heading-letter-spacing);
+  font-size: 16px;           /* source: 16px label */
+  font-weight: 400;          /* source: regular weight, not bold */
+  letter-spacing: -0.2px;
   color: var(--text-color);
   text-decoration: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
@@ -53,6 +53,29 @@
 a.cards-category-link:hover {
   border-color: var(--brand-blue);
   box-shadow: var(--shadow-card);
+  color: var(--brand-blue);
+}
+
+/* Category glyph (restored from the source sprite by cards-category.js). */
+.cards-category .cards-category-icon {
+  display: inline-flex;
+  flex: none;
+  line-height: 0;
+  color: var(--label-color); /* source: dark-grey glyph */
+}
+
+.cards-category .cards-category-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+/* The sprite paths carry their own dark fill; leave them as authored so the
+   glyph detail (multi-tone dental icons) is preserved. */
+.cards-category .cards-category-icon svg [fill]:not([fill="none"]) {
+  fill: var(--label-color);
+}
+
+a.cards-category-link:hover .cards-category-icon {
   color: var(--brand-blue);
 }
 

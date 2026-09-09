@@ -1,0 +1,23 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/explore/digital-dentistry/product-topics/digital-impression.html",
+  "path": "en-us/explore/digital-dentistry/product-topics/digital-impression",
+  "timestamp": "2026-09-09T06:44:54.504Z",
+  "title": "Intraoral Dental Scanners",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "carousel-promo",
+    "carousel-promo",
+    "carousel-promo"
+  ]
+}

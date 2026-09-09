@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/primescan-2.html",
+  "path": "en-us/explore/digital-dentistry/brands/primescan-2",
+  "timestamp": "2026-09-09T06:41:33.970Z",
+  "title": "Primescan 2",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-quote",
+    "accordion"
+  ]
+}

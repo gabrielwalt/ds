@@ -1,0 +1,30 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/explore/endodontics/brands/waveone-gold.html",
+  "path": "en-us/explore/endodontics/brands/waveone-gold",
+  "timestamp": "2026-09-09T06:41:51.412Z",
+  "title": "WaveOne Gold: Simplified root canal shaping & obturation",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "carousel-promo",
+    "accordion",
+    "accordion",
+    "accordion",
+    "accordion"
+  ]
+}

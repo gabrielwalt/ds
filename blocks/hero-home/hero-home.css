@@ -110,6 +110,82 @@
   content: none;
 }
 
+/* ---- Shop hero variant ----------------------------------------------------
+ * The Shop landing hero (source .cmp-shophero / .cmp-hero__banner-left--small)
+ * is a shorter, LEFT-aligned banner: the photo sits on the right and fades into
+ * a dark-blue gradient on the left, the title is left-aligned, and the CTA is a
+ * solid blue PILL button (not a centered text hero). */
+.hero-home.shop {
+  min-height: 300px;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px max(24px, calc((100% - var(--content-max-width)) / 2));
+  background-color: rgb(1 33 92); /* deep brand blue base behind the photo */
+}
+
+/* Left-to-right blue gradient over the photo so the left-side text stays
+   readable (source: dark blue → transparent toward the right). */
+.hero-home.shop::before {
+  background-image: linear-gradient(
+    90deg,
+    rgb(1 33 92) 0%,
+    rgb(1 33 92 / 85%) 30%,
+    rgb(1 33 92 / 20%) 65%,
+    rgb(1 33 92 / 0%) 100%
+  );
+}
+
+/* Photo anchored to the right, covering the band. */
+.hero-home.shop > div:first-child img {
+  object-position: right center;
+}
+
+.hero-home.shop > div:last-child {
+  margin: 0;
+  max-width: var(--content-max-width);
+  text-align: left;
+}
+
+.hero-home.shop h1 {
+  margin: 0;
+  max-width: 640px;
+  margin-inline: 0;
+  text-align: left;
+}
+
+/* CTA promoted to a filled blue pill button by the parser (<strong><a>). */
+.hero-home.shop .button-container {
+  margin-top: 24px;
+  text-align: left;
+}
+
+.hero-home.shop a.button {
+  display: inline-block;
+  padding: 12px 32px;
+  border-radius: var(--radius-pill);
+  background-color: var(--brand-blue);
+  color: var(--section-light-text);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.hero-home.shop a.button:hover {
+  background-color: var(--brand-blue-hover);
+}
+
+@media (width >= 900px) {
+  .hero-home.shop {
+    min-height: 340px;
+  }
+
+  .hero-home.shop h1 {
+    font-size: 52px; /* source shop hero title, smaller than the 69px home hero */
+    letter-spacing: -1.3px;
+  }
+}
+
 /* Tablet: step the hero up between the 36px mobile and 69px desktop sizes so
    the headline doesn't jump abruptly, and give the hero a bit more height. */
 @media (width >= 600px) {

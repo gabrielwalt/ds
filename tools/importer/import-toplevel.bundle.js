@@ -79,15 +79,22 @@ var CustomImportScript = (() => {
       element.replaceWith(...element.childNodes);
       return;
     }
+    const isShopHero = /cmp-shophero|cmp-hero__banner-left/.test(element.className);
+    const ctaCells = ctaLinks.map((a) => {
+      if (!isShopHero) return a;
+      const strong = document2.createElement("strong");
+      strong.append(a.cloneNode(true));
+      return strong;
+    });
     const cells = [];
     if (bgImage) cells.push([bgImage]);
     const contentCell = [];
     if (heading) contentCell.push(heading);
     if (subheading) contentCell.push(subheading);
-    contentCell.push(...ctaLinks);
+    contentCell.push(...ctaCells);
     cells.push([contentCell]);
     const block = WebImporter.Blocks.createBlock(document2, {
-      name: "hero-home",
+      name: isShopHero ? "hero-home (shop)" : "hero-home",
       cells
     });
     element.replaceWith(block);
@@ -174,8 +181,11 @@ var CustomImportScript = (() => {
     contentCell.push(...ctaLinks);
     const cells = [];
     cells.push([image || "", contentCell]);
+    let name = "cards-feature";
+    if (/cmp-shop-teaser--banner/.test(element.className)) name = "cards-feature (banner)";
+    else if (/cmp-shop-teaser--promotion/.test(element.className)) name = "cards-feature (promotion)";
     const block = WebImporter.Blocks.createBlock(document2, {
-      name: "cards-feature",
+      name,
       cells
     });
     element.replaceWith(block);
@@ -674,8 +684,9 @@ var CustomImportScript = (() => {
           if (a === 0) return null;
           const avg = (r + g + bl) / 3;
           if (avg < 110) return "dark";
-          if (avg > 245) return null;
-          if (avg >= 200) return "grey";
+          if (avg >= 200 && avg <= 242) {
+            return Math.abs(avg - 238) <= Math.abs(avg - 229) ? "grey-soft" : "grey";
+          }
           return null;
         };
         const headings = [...document2.querySelectorAll("main h1, main h2, main h3, main h4, main h5, main h6, .cmp-container h1, .cmp-container h2, .cmp-container h3")];

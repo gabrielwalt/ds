@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/explore/orthodontics/brands/suresmile-clear-aligner.html",
+  "path": "en-us/explore/orthodontics/brands/suresmile-clear-aligner",
+  "timestamp": "2026-09-09T06:42:27.028Z",
+  "title": "SureSmile Clear Aligner",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "cards-quote",
+    "cards-quote"
+  ]
+}

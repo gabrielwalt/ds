@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/explore/orthodontics.html",
+  "path": "en-us/explore/orthodontics",
+  "timestamp": "2026-09-09T07:08:05.907Z",
+  "title": "Orthodontic Products & Solutions",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "carousel-promo",
+    "carousel-promo",
+    "carousel-promo",
+    "carousel-promo"
+  ]
+}

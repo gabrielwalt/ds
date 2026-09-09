@@ -79,15 +79,22 @@ var CustomImportScript = (() => {
       element.replaceWith(...element.childNodes);
       return;
     }
+    const isShopHero = /cmp-shophero|cmp-hero__banner-left/.test(element.className);
+    const ctaCells = ctaLinks.map((a) => {
+      if (!isShopHero) return a;
+      const strong = document2.createElement("strong");
+      strong.append(a.cloneNode(true));
+      return strong;
+    });
     const cells = [];
     if (bgImage) cells.push([bgImage]);
     const contentCell = [];
     if (heading) contentCell.push(heading);
     if (subheading) contentCell.push(subheading);
-    contentCell.push(...ctaLinks);
+    contentCell.push(...ctaCells);
     cells.push([contentCell]);
     const block = WebImporter.Blocks.createBlock(document2, {
-      name: "hero-home",
+      name: isShopHero ? "hero-home (shop)" : "hero-home",
       cells
     });
     element.replaceWith(block);
@@ -163,7 +170,7 @@ var CustomImportScript = (() => {
       element.querySelectorAll(
         ".cmp-teaser__action-link, .cmp-teaser__cta a, .cmp-button, a.cmp-teaser__action-link"
       )
-    );
+    ).filter((a) => !a.closest(".d-none"));
     if (!heading && !description && !image) {
       element.replaceWith(...element.childNodes);
       return;
@@ -174,8 +181,11 @@ var CustomImportScript = (() => {
     contentCell.push(...ctaLinks);
     const cells = [];
     cells.push([image || "", contentCell]);
+    let name = "cards-feature";
+    if (/cmp-shop-teaser--banner/.test(element.className)) name = "cards-feature (banner)";
+    else if (/cmp-shop-teaser--promotion/.test(element.className)) name = "cards-feature (promotion)";
     const block = WebImporter.Blocks.createBlock(document2, {
-      name: "cards-feature",
+      name,
       cells
     });
     element.replaceWith(block);
@@ -250,6 +260,19 @@ var CustomImportScript = (() => {
         ".legal-popup",
         ".global-legal-popup"
       ]);
+      element.querySelectorAll(".cmp-title__text, h1, h2, h3, h4, h5, h6").forEach((h) => {
+        if (/^browse by\b.*:?\s*$/i.test(h.textContent.trim())) {
+          const wrapper = h.closest(".title") || h;
+          wrapper.remove();
+        }
+      });
+      element.querySelectorAll(".cmp-shophero__signin, .hero.hidden").forEach((el) => el.remove());
+      element.querySelectorAll("p, span, div").forEach((el) => {
+        const t = el.textContent.trim();
+        if (/^welcome,?\s*\$?\{?firstname\}?!?$/i.test(t) || /^welcome!$/i.test(t)) {
+          el.remove();
+        }
+      });
       element.querySelectorAll('img[src^="data:image/svg"]').forEach((img) => img.remove());
       element.querySelectorAll("svg").forEach((svg) => svg.remove());
     }

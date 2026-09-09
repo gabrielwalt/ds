@@ -17,10 +17,15 @@
  * fallbacks added for the .course-card-slider.contentfragmentlist variant.
  */
 export default function parse(element, { document }) {
-  // Slides: swiper slides (promocards instance) or course-card items
-  // (contentfragmentlist instance). Fall back to promocards/course cards
-  // directly if there is no swiper wrapper.
+  // Slides: swiper slides (promocards instance), AEM Core carousel items
+  // (.cmp-carousel__item — category/learn/product-topic pages), or course-card
+  // items (contentfragmentlist instance). Fall back to promocards/course cards
+  // directly if there is no slide wrapper. De-duplicate the .cmp-carousel case
+  // where the same slide is cloned for the infinite-loop track.
   let slides = Array.from(element.querySelectorAll(':scope .swiper-slide'));
+  if (!slides.length) {
+    slides = Array.from(element.querySelectorAll(':scope .cmp-carousel__item'));
+  }
   if (!slides.length) {
     slides = Array.from(
       element.querySelectorAll('.promocards, .course-card, .cmp-teaser'),

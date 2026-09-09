@@ -329,3 +329,121 @@ main .section.dark .cards-feature .cards-feature-card-icon {
 main .section.blue .cards-feature .cards-feature-card-icon {
   color: var(--section-light-text);
 }
+
+/* ==== Shop teaser variants ================================================ */
+
+/* These variant rules intentionally follow the section-scoped rules above but
+   use variant-class selectors; the cascade order is correct for our use (the
+   variant class is only present on Shop teasers). Disable the ordering lint. */
+/* stylelint-disable no-descending-specificity */
+
+/* ---- Banner variant (.cards-feature.banner) ------------------------------
+ * Source .cmp-shop-teaser--banner ("Build your EV implant treatment", "The
+ * more you buy, the more you earn!"): a wide horizontal card with the image on
+ * the RIGHT, left-aligned title/description, and a filled CTA at the left.
+ * The block wrapper spans the full section row (not a 3-across cell). */
+main .section.cards-feature-container > .cards-feature-wrapper:has(.cards-feature.banner) {
+  flex: 1 1 100%;
+  max-width: none;
+}
+
+.cards-feature.banner > ul > li {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  padding: 0;
+  border: 1px solid var(--card-border-light);
+  border-radius: var(--radius-card);
+  background-color: var(--background-color);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  text-align: left;
+}
+
+/* Text column first (left), image column second (right). */
+.cards-feature.banner .cards-feature-card-body {
+  order: 1;
+  padding: 40px;
+}
+
+.cards-feature.banner .cards-feature-card-image {
+  order: 2;
+  margin: 0;
+  align-self: stretch;
+}
+
+.cards-feature.banner .cards-feature-card-image img {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.cards-feature.banner .cards-feature-card-body h4,
+.cards-feature.banner .cards-feature-card-body h5,
+.cards-feature.banner .cards-feature-card-body h6 {
+  font-size: var(--heading-size-m);
+  text-align: left;
+}
+
+/* Filled pill CTA on banners (source renders "Get started" / "Enroll now" as a
+   solid blue button, not a text link). */
+.cards-feature.banner .cards-feature-card-body p:last-child:has(a) {
+  margin-top: 24px;
+}
+
+.cards-feature.banner .cards-feature-card-body a:any-link {
+  display: inline-flex;
+  padding: 12px 32px;
+  border-radius: var(--radius-pill);
+  background-color: var(--brand-blue);
+  color: var(--section-light-text);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+}
+
+.cards-feature.banner .cards-feature-card-body a:any-link::after {
+  content: none; /* no trailing arrow glyph on the filled button */
+}
+
+.cards-feature.banner .cards-feature-card-body a:hover {
+  background-color: var(--brand-blue-hover);
+  color: var(--section-light-text);
+}
+
+@media (width < 700px) {
+  .cards-feature.banner > ul > li {
+    grid-template-columns: 1fr;
+  }
+
+  .cards-feature.banner .cards-feature-card-image {
+    order: 0; /* image on top when stacked */
+  }
+}
+
+/* ---- Promotion variant (.cards-feature.promotion) ------------------------
+ * Source .cmp-shop-teaser--promotion (the "Buy N packs…" offers): compact
+ * cards with a small product image, LEFT-aligned, smaller title + fine print. */
+.cards-feature.promotion > ul > li {
+  align-items: flex-start;
+  text-align: left;
+  padding: var(--card-padding);
+}
+
+.cards-feature.promotion .cards-feature-card-image img {
+  height: 120px;
+  object-fit: contain;
+}
+
+.cards-feature.promotion .cards-feature-card-body h4,
+.cards-feature.promotion .cards-feature-card-body h5 {
+  font-size: var(--heading-size-xs);
+  text-align: left;
+}
+
+.cards-feature.promotion .cards-feature-card-body p {
+  font-size: 14px;
+  text-align: left;
+}

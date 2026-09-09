@@ -1,0 +1,27 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/explore/restorative.html",
+  "path": "en-us/explore/restorative",
+  "timestamp": "2026-09-09T06:39:51.237Z",
+  "title": "Dental Restorative Products and more!",
+  "template": "catalog",
+  "blocks": [
+    "hero-home",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "carousel-promo",
+    "carousel-promo",
+    "carousel-promo",
+    "accordion",
+    "accordion"
+  ]
+}

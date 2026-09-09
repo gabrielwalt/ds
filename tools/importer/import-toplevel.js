@@ -235,9 +235,18 @@ export default {
         if (a === 0) return null; // transparent
         const avg = (r + g + bl) / 3;
         if (avg < 110) return 'dark'; // dark slate band rgb(51 63 76)
-        if (avg > 245) return null; // white / near-white → default section
-        if (avg >= 200) return 'grey'; // light-grey band rgb(229 229 229)
-        return null;
+        // Two distinct light-grey bands exist in the design (brand.css):
+        //   grey       = rgb(229 229 229) ≈ avg 229  (§4 toolkit tiles, "Access
+        //                hardware", first Why-DS band)
+        //   grey-soft  = rgb(238 238 238) ≈ avg 238  ("Get to know us" band)
+        // Match only within a tight window around those two tokens (≤242), so a
+        // near-white section zone (e.g. rgb(246 246 246) ≈ 246, or the #fafafa
+        // page background ≈ 250) is treated as the DEFAULT light section — not a
+        // false grey band. Match to whichever token is nearer.
+        if (avg >= 200 && avg <= 242) {
+          return Math.abs(avg - 238) <= Math.abs(avg - 229) ? 'grey-soft' : 'grey';
+        }
+        return null; // white / near-white / off-white → default section
       };
       const headings = [...document.querySelectorAll('main h1, main h2, main h3, main h4, main h5, main h6, .cmp-container h1, .cmp-container h2, .cmp-container h3')];
       const seen = new Set();

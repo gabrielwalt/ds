@@ -10,26 +10,23 @@
 }
 
 .accordion .accordion-item {
-  border-bottom: 1px solid var(--card-border-light);
+  border-bottom: 1px solid var(--accordion-divider, rgb(163 178 193));
 }
 
-.accordion .accordion-item:first-child {
-  border-top: 1px solid var(--card-border-light);
-}
-
-/* Question row (native <summary>) */
+/* Question row (native <summary>) — source: 24px top/bottom padding with a
+   small inline gutter, dark 28px question text, caret aligned right. */
 .accordion .accordion-item-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 20px 0;
+  padding: 24px 12px;
   color: var(--text-color);
   font-family: var(--heading-font-family);
-  font-size: var(--heading-size-xs); /* 23px — matches source question size */
+  font-size: var(--heading-size-s); /* 28px — matches source h5 question size */
   font-weight: 600;
   line-height: 1.3;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.7px;
   cursor: pointer;
   list-style: none;
 }
@@ -39,20 +36,20 @@
   display: none;
 }
 
-/* chevron (reuses the brand arrow glyph, rotated to point down; up when open) */
+/* caret (source: CaretDown glyph, dark grey, points DOWN closed / UP when
+   open). Uses the brand caret token, masked so it inherits currentColor. */
 .accordion .accordion-item-title::after {
   content: '';
   flex: none;
   width: 24px;
   height: 24px;
-  background-color: var(--brand-blue);
-  mask: var(--icon-arrow-right) center / contain no-repeat;
-  transform: rotate(90deg);
+  background-color: var(--text-color); /* source: dark caret, not blue */
+  mask: var(--icon-caret-down) center / contain no-repeat;
   transition: transform 0.2s ease;
 }
 
 .accordion .accordion-item[open] .accordion-item-title::after {
-  transform: rotate(-90deg);
+  transform: rotate(180deg);
 }
 
 /* Answer body */

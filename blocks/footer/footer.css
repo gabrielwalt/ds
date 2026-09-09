@@ -85,7 +85,7 @@ footer .footer .section:first-child li a {
    never italic. */
 footer .footer em {
   color: var(--footer-accent);
-  font-weight: 700;
+  font-weight: 400; /* source: accent links are orange but NOT bold */
   font-style: normal;
 }
 
@@ -133,10 +133,11 @@ footer .footer .footer-link-external-tail .footer-icon {
 }
 
 /* ---- Accent (orange) links — Explore all…, Investors, Apply for Net terms,
-   Contact us. Rendered bold + orange to signal the different colour clearly. */
+   Contact us. Source renders these ORANGE at the normal link weight (400) — the
+   colour alone signals the distinction, they are not bold. */
 footer .footer a.footer-link-accent {
   color: var(--footer-accent);
-  font-weight: 700;
+  font-weight: 400;
 }
 
 footer .footer a.footer-link-accent:hover,

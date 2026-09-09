@@ -56,6 +56,21 @@ export default function decorate(block) {
       if (div.querySelector('picture')) div.className = 'cards-feature-card-image';
       else div.className = 'cards-feature-card-body';
     });
+    // Tag the CTA: the last body paragraph that wraps a link. A generated
+    // wrapper carries the layout class (spacing / bottom-pin) so the CSS keys
+    // off `.cards-feature-card-cta` instead of a fragile `p:last-child:has(a)`;
+    // the authored <p> moves in whole (keeps Experience Workspace editability).
+    const body = li.querySelector('.cards-feature-card-body');
+    if (body) {
+      const ctas = [...body.querySelectorAll(':scope > p')].filter((p) => p.querySelector('a'));
+      const cta = ctas[ctas.length - 1];
+      if (cta && cta === body.lastElementChild) {
+        const wrap = document.createElement('div');
+        wrap.className = 'cards-feature-card-cta';
+        cta.replaceWith(wrap);
+        wrap.append(cta);
+      }
+    }
     // If this card has no image/illustration, restore its Phosphor icon from
     // the heading text so it matches the source icon-led card.
     if (!li.querySelector('.cards-feature-card-image')) {

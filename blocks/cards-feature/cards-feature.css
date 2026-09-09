@@ -222,13 +222,19 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
   text-align: inherit;
 }
 
-/* CTA paragraph ("Learn more" link) — sits a --card-cta-gap below the
-   description. Scoped to a last paragraph that actually wraps a LINK, so a
-   plain description that happens to be the last child doesn't inherit the CTA
-   gap (which had inflated the title→description gap on card-less-CTA cards). */
-/* stylelint-disable-next-line no-descending-specificity */
-.cards-feature .cards-feature-card-body p:last-child:has(a) {
-  margin: var(--card-cta-gap) 0 0;
+/* CTA ("Learn more" link) — generated `.cards-feature-card-cta` wrapper (see
+   cards-feature.js) around the authored link paragraph. Sits --card-cta-gap
+   below the description and pins to the card bottom so CTAs line up across a
+   row regardless of description length. margin-top:auto is a no-op when the
+   card content already fills its height, so it's safe on every variant — no
+   section-background guard needed. */
+.cards-feature .cards-feature-card-cta {
+  margin-top: auto;
+  padding-top: var(--card-cta-gap);
+}
+
+.cards-feature .cards-feature-card-cta > p {
+  margin: 0;
 }
 
 .cards-feature .cards-feature-card-body a:any-link {
@@ -242,21 +248,17 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
 }
 
 /* ---- §9 "Didn't find what you need? Let's connect" — the ONLY plain
-   cards-feature section (no dark/blue/grey-soft variant). The source renders
-   these icon cards with NO surface (transparent, same as the section) and
-   aligns every card's CTA on a common baseline at the card bottom. */
+   cards-feature section (no dark/blue/grey-soft background variant). The source
+   renders these icon cards with NO surface (transparent, same as the section).
+   The CTA bottom-pin is handled generically by `.cards-feature-card-cta`
+   above, so only the surface difference lives here. The `:not()` on the section
+   background is a genuine variant distinction (plain vs. dark/blue/grey-soft);
+   the `:not(:has(image))` selects the icon cards (image cards keep their white
+   teaser surface). */
 main .section.cards-feature-container:not(.dark, .blue, .grey-soft)
   .cards-feature > ul > li:not(:has(.cards-feature-card-image)) {
   background-color: transparent;
   border-radius: 0;
-}
-
-/* Pin the CTA paragraph to the bottom of the (flex-column) card body so the
-   links line up horizontally regardless of description length. */
-/* stylelint-disable-next-line no-descending-specificity */
-main .section.cards-feature-container:not(.dark, .blue, .grey-soft)
-  .cards-feature-card-body p:last-child:has(> a:only-child) {
-  margin-top: auto;
 }
 
 /* trailing arrow — the source "ArrowRightRegular" SVG glyph, masked so it
@@ -395,13 +397,13 @@ main .section.cards-feature-container > .cards-feature-wrapper:has(.cards-featur
 }
 
 /* Filled pill CTA on banners (source renders "Get started" / "Enroll now" as a
-   solid blue button, not a text link). More breathing room above the CTA
-   (was 24px) to match the source's ~36px gap between the description and the
-   button. Scoped under the section container so it beats the section-level
-   `p:last-child:has(> a:only-child) { margin-top: auto }` rule (which would
-   otherwise collapse to 0 inside the banner's grid cell). */
-main .section.cards-feature-container .cards-feature.banner .cards-feature-card-body p:last-child:has(a) {
-  margin-top: 36px;
+   solid blue button, not a text link). The banner body is a grid cell (not a
+   flex column), so the generic bottom-pin doesn't apply; give it a fixed ~36px
+   gap above the button to match the source. Variant override on the same
+   `.cards-feature-card-cta` wrapper — short and low-specificity. */
+.cards-feature.banner .cards-feature-card-cta {
+  margin-top: 0;
+  padding-top: 36px;
 }
 
 .cards-feature.banner .cards-feature-card-body a:any-link {

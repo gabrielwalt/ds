@@ -80,8 +80,14 @@
   --radius-image: 12px;
   --radius-pill: 50px;
 
-  /* ---- Shadows ---- */
-  --shadow-card: rgb(0 0 0 / 10%) 0 4px 6px -1px, rgb(0 0 0 / 6%) 0 2px 4px -1px;
+  /* ---- Shadows ----
+   * Normalised default for reusable card blocks: a subtle grey border
+   * (--card-border-light) with NO shadow, so cards read consistently on the
+   * site's flat section backgrounds (e.g. the Shop page grey). The source is
+   * itself inconsistent about drop shadows; we standardise on borderless-shadow.
+   * A block that genuinely needs elevation can still set its own box-shadow
+   * locally instead of relying on this shared token. */
+  --shadow-card: none;
 
   /* ---- Buttons ---- */
   --button-radius: var(--radius-pill);

@@ -52,9 +52,11 @@
   transform: rotate(180deg);
 }
 
-/* Answer body */
+/* Answer body — share the SAME horizontal inset as the question row (the 12px
+   from `.accordion-item-title` padding) so the body text lines up on the same
+   left edge as the title text, matching the source. */
 .accordion .accordion-item-body {
-  padding: 0 0 20px;
+  padding: 0 12px 20px;
   color: var(--text-muted);
   font-family: var(--body-font-family);
   font-size: var(--body-size);

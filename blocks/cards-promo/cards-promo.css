@@ -71,6 +71,17 @@ main .section.cards-promo-container > .cards-promo-wrapper {
   }
 }
 
+/* The block element itself must be a full-height flex column: its wrapper is a
+   stretched flex item (equal height across the row), but `.cards-promo` renders
+   as a plain block, so without this the card inside only grows to its own
+   content height on shorter cards — leaving the bottom-pinned CTA (margin-top:
+   auto) with no slack to fill, so CTAs fall out of alignment. Making the block
+   a flex column lets `.cards-promo-card` (flex: 1) fill the full wrapper height. */
+.cards-promo.block {
+  display: flex;
+  flex-direction: column;
+}
+
 /* ---- The card ---- (source .cmp-promocard__card-main: 12px radius, 1px
    border, 16px padding, no shadow) */
 .cards-promo .cards-promo-card {

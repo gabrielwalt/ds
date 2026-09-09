@@ -349,7 +349,11 @@ main .section.cards-feature-container > .cards-feature-wrapper:has(.cards-featur
 
 .cards-feature.banner > ul > li {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+
+  /* Image column slightly narrower than the text column (was 1fr 1fr = 50/50),
+     so the artwork on the right reads a touch smaller — matching the source
+     where the image sits at ~42% of the card width. */
+  grid-template-columns: 1.4fr 1fr;
   align-items: center;
   gap: 40px;
   padding: 0;
@@ -384,14 +388,20 @@ main .section.cards-feature-container > .cards-feature-wrapper:has(.cards-featur
 .cards-feature.banner .cards-feature-card-body h4,
 .cards-feature.banner .cards-feature-card-body h5,
 .cards-feature.banner .cards-feature-card-body h6 {
-  font-size: var(--heading-size-m);
+  /* Slightly smaller than before (was --heading-size-m, 32px) — the source
+     banner title is ~28px; the smaller title also balances the narrower image. */
+  font-size: var(--heading-size-s);
   text-align: left;
 }
 
 /* Filled pill CTA on banners (source renders "Get started" / "Enroll now" as a
-   solid blue button, not a text link). */
-.cards-feature.banner .cards-feature-card-body p:last-child:has(a) {
-  margin-top: 24px;
+   solid blue button, not a text link). More breathing room above the CTA
+   (was 24px) to match the source's ~36px gap between the description and the
+   button. Scoped under the section container so it beats the section-level
+   `p:last-child:has(> a:only-child) { margin-top: auto }` rule (which would
+   otherwise collapse to 0 inside the banner's grid cell). */
+main .section.cards-feature-container .cards-feature.banner .cards-feature-card-body p:last-child:has(a) {
+  margin-top: 36px;
 }
 
 .cards-feature.banner .cards-feature-card-body a:any-link {

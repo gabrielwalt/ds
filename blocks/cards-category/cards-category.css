@@ -82,7 +82,6 @@ main .section.cards-feature-container.cards-category-container > .default-conten
 
 a.cards-category-link:hover {
   border-color: var(--brand-blue);
-  box-shadow: var(--shadow-card);
   color: var(--brand-blue);
 }
 

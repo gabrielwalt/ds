@@ -1,0 +1,41 @@
+{
+  "variantName": "cards-category",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-09-09T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/en-us/shop",
+    "originPage": "Dentsply Sirona US Shop landing page",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "navigation",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "grid of bordered icon + label link tiles",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "shop top categories / top brands tile grids",
+      "compact icon + label navigation grids",
+      "linking to category or brand landing pages"
+    ],
+    "notSuitableFor": [
+      "cards with body copy or CTAs",
+      "large photo cover cards",
+      "hero banners"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "/en-us/shop"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-09T00:00:00.000Z"
+  }
+}

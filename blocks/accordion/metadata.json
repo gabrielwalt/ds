@@ -1,0 +1,43 @@
+{
+  "variantName": "accordion",
+  "baseBlock": "accordion",
+  "version": "1.0.0",
+  "created": "2026-09-09T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/en-us/support",
+    "originPage": "Dentsply Sirona US support and brand pages",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "disclosure",
+    "imagePattern": "none"
+  },
+  "contentPattern": {
+    "structure": "rows of summary heading + collapsible body content",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "FAQ lists",
+      "expandable support / help topics",
+      "progressive disclosure of long-form detail"
+    ],
+    "notSuitableFor": [
+      "primary navigation",
+      "content that should always be visible",
+      "image galleries"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "/en-us/support",
+      "/en-us/why-ds/our-programs/one-ds",
+      "/en-us/explore/digital-dentistry"
+    ],
+    "reuseCount": 8,
+    "lastUsed": "2026-09-09T00:00:00.000Z"
+  }
+}

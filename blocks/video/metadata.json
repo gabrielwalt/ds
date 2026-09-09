@@ -1,0 +1,41 @@
+{
+  "variantName": "video",
+  "baseBlock": "video",
+  "version": "1.0.0",
+  "created": "2026-09-09T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/en-us/learn",
+    "originPage": "Dentsply Sirona US Learn landing page",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "media",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "rows of video thumbnail + title (optional link), shown as a media row",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "video thumbnail rows",
+      "'watch and learn' media galleries",
+      "linking out to social or hosted video"
+    ],
+    "notSuitableFor": [
+      "text-only content",
+      "icon-led feature grids",
+      "FAQ disclosure"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "/en-us/learn"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-09T00:00:00.000Z"
+  }
+}

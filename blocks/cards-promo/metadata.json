@@ -1,0 +1,41 @@
+{
+  "variantName": "cards-promo",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-09-09T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.dentsplysirona.com/en-us/shop",
+    "originPage": "Dentsply Sirona US Shop landing page",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "promo",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "eyebrow label + heading + image + CTA link, per card",
+    "buttonCount": 1,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "featured promotion / product / program highlight rows",
+      "shop landing promo cards that overlap the hero",
+      "2-3 up promotional callouts with an image and a single CTA"
+    ],
+    "notSuitableFor": [
+      "long link lists",
+      "icon-led feature grids",
+      "rotating carousels"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "/en-us/shop"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-09T00:00:00.000Z"
+  }
+}

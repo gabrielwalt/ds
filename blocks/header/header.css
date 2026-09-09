@@ -22,8 +22,14 @@ header nav {
     'sections sections sections' 1fr / 1fr auto auto;
   align-items: center;
   gap: 0 24px;
+
+  /* Use the SAME content-width container as the page + footer (styles.css
+     `main > .section > div`): content-max-width + auto side margins + a 24px
+     (desktop 32px) inline gutter — so the logo's left edge and the Log In
+     button's right edge line up exactly with the page content edges, instead
+     of the nav defining its own narrower width. */
   margin: auto;
-  max-width: 1248px;
+  max-width: var(--content-max-width);
   height: var(--nav-height);
   padding: 0 24px;
   font-family: var(--body-font-family);
@@ -59,7 +65,9 @@ header nav[aria-expanded='true'] {
     display: flex;
     justify-content: space-between;
     gap: 0 32px;
-    max-width: 1264px;
+
+    /* max-width stays var(--content-max-width) from the base rule; only the
+       inline gutter grows to 32px at desktop, matching the page content. */
     padding: 0 32px;
   }
 

@@ -352,6 +352,45 @@ export default async function decorate(block) {
       }
     });
 
+    // Persistent active-section underline. Mark the top-level nav item whose
+    // section contains the CURRENT page so its blue underline stays visible
+    // (the CSS shows the underline for `.nav-active` as well as :hover /
+    // aria-expanded — so hovering another item shows both indicators at once).
+    // Generic: derive the section from each trigger's own href path and match
+    // it as a path-segment prefix of the current page, so every descendant of
+    // a section (e.g. /en-us/shop/categories/…) lights up its top-level item.
+    const currentPath = window.location.pathname
+      // the local dev server serves pages under a /content prefix; strip it so
+      // /content/en-us/shop matches the /en-us/shop nav href in both envs.
+      .replace(/^\/content(?=\/)/, '')
+      .replace(/\.html?$/, '')
+      .replace(/\/$/, '');
+    const topItems = [...navSections.querySelectorAll(':scope .default-content-wrapper > ul > li')];
+    let bestMatch = null;
+    let bestLen = -1;
+    topItems.forEach((li) => {
+      const a = li.querySelector(':scope > a');
+      if (!a) return;
+      let sectionPath;
+      try {
+        sectionPath = new URL(a.getAttribute('href'), window.location.origin).pathname;
+      } catch (e) {
+        return;
+      }
+      sectionPath = sectionPath.replace(/\.html?$/, '').replace(/\/$/, '');
+      if (!sectionPath || sectionPath === '/') return;
+      // Match the current page to this section when the section path equals the
+      // page path or is a leading path SEGMENT of it (avoid /en-us/shop
+      // matching /en-us/shopping). Pick the longest (most specific) match.
+      const isMatch = currentPath === sectionPath
+        || currentPath.startsWith(`${sectionPath}/`);
+      if (isMatch && sectionPath.length > bestLen) {
+        bestMatch = li;
+        bestLen = sectionPath.length;
+      }
+    });
+    if (bestMatch) bestMatch.classList.add('nav-active');
+
     // Click outside the open mega menu closes it (desktop).
     document.addEventListener('click', (e) => {
       if (!isDesktop.matches) return;

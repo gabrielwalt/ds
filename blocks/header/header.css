@@ -675,12 +675,18 @@ header nav .nav-back {
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li:hover > a,
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > a {
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > a,
+  header nav .nav-sections .default-content-wrapper > ul > li.nav-active > a {
     color: var(--brand-blue);
   }
 
+  /* Underline shows for the HOVERED item, the OPEN mega panel's item, AND the
+     item for the current page's active section (.nav-active) — so the active
+     section stays underlined and, when another item is hovered, both underlines
+     appear at once. */
   header nav .nav-sections .default-content-wrapper > ul > li:hover > a::after,
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > a::after {
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > a::after,
+  header nav .nav-sections .default-content-wrapper > ul > li.nav-active > a::after {
     opacity: 1;
   }
 

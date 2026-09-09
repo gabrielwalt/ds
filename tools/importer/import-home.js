@@ -408,9 +408,11 @@ export default {
     main.textContent = '';
     main.append(rebuilt);
 
-    // 6. Output path. This homepage is imported to `/index` per the migration
-    //    request (source URL /en-us maps to the site homepage index.html).
-    const path = WebImporter.FileUtils.sanitizePath('/index');
+    // 6. Output path. The source homepage is www.dentsplysirona.com/en-us, so
+    //    it belongs at `/en-us` — the folder index of the en-us locale, making
+    //    it a true SIBLING of /en-us/explore, /en-us/learn, /en-us/shop, etc.
+    //    EDS serves `en-us/index` at the `/en-us/` path.
+    const path = WebImporter.FileUtils.sanitizePath('/en-us/index');
 
     return [{
       element: main,

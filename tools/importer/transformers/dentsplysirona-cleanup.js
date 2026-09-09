@@ -14,9 +14,15 @@ const TransformHook = { beforeTransform: 'beforeTransform', afterTransform: 'aft
 export default function transform(hookName, element, payload) {
   if (hookName === TransformHook.beforeTransform) {
     // OneTrust cookie consent banner + dark overlay filter block the page.
+    // The global legal / age-gate popup ("intended only for healthcare
+    // professionals… must be 18 years old…") is a non-authorable consent
+    // dialog, not page content — strip it so its text does not land in the
+    // imported page.
     WebImporter.DOMUtils.remove(element, [
       '#onetrust-consent-sdk',
       '.onetrust-pc-dark-filter',
+      '.legal-popup',
+      '.global-legal-popup',
     ]);
 
     // Remove decorative inline-SVG UI icons (arrows, icon-card glyphs, sprite

@@ -129,8 +129,12 @@ main .section.cards-overlay-container > .cards-overlay-wrapper {
 }
 
 .cards-overlay .cards-overlay-content a.cards-overlay-cta:any-link::after {
-  content: "\2192"; /* right arrow */
+  content: ""; /* source ArrowRightRegular glyph, masked */
   display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-color: currentcolor;
+  mask: var(--icon-arrow-right) center / contain no-repeat;
 }
 
 .cards-overlay .cards-overlay-content a.cards-overlay-cta:hover {

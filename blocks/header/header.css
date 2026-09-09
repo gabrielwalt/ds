@@ -1,6 +1,8 @@
 /* header and nav layout */
 header .nav-wrapper {
-  background-color: var(--background-color);
+  /* match the page background (very light grey), not pure white, so the nav
+     toolbar blends into the page. */
+  background-color: var(--page-bg);
   width: 100%;
   z-index: 2;
   position: fixed;
@@ -201,6 +203,339 @@ header nav .nav-sections ul > li > ul > li {
   font-weight: 400;
 }
 
+/* =====================================================================
+   MOBILE / TABLET NAV (< 900px): full-screen overlay with drill-in.
+   Level 1 = list of the 5 top items. Tapping one drills into its section
+   (level 2). Inside a section, each category heading is an accordion
+   (level 3). A back bar returns to level 1; the hamburger's X closes all.
+   ===================================================================== */
+@media (width < 900px) {
+  /* When the menu is open, lift the whole fixed wrapper above all page content
+     (sections create their own stacking contexts that would otherwise paint
+     over a z-index:2 header). */
+  header .nav-wrapper:has(nav[aria-expanded='true']) {
+    z-index: 1000;
+  }
+
+  /* When open, the nav becomes a fixed opaque overlay covering the viewport,
+     so no page content shows through. */
+  header nav[aria-expanded='true'] {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    height: 100dvh;
+    padding: 0;
+    background-color: var(--page-bg);
+    overflow-y: auto;
+  }
+
+  /* Top toolbar row inside the overlay: brand pinned top-left, close (×)
+     pinned top-right, both at nav-height. They are lifted out of the column
+     flow (absolute) so the scrollable sections list starts below them. */
+  header nav[aria-expanded='true'] .nav-brand,
+  header nav[aria-expanded='true'] .nav-hamburger {
+    position: absolute;
+    top: 0;
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    z-index: 1;
+  }
+
+  header nav[aria-expanded='true'] .nav-brand {
+    left: 24px;
+  }
+
+  header nav[aria-expanded='true'] .nav-hamburger {
+    right: 24px;
+  }
+
+  /* Level-1 list: large stacked items, pushed below the pinned toolbar. */
+  header nav[aria-expanded='true'] .nav-sections {
+    flex: 1 1 auto;
+    margin-top: var(--nav-height);
+    padding: 8px 24px 24px;
+    overflow-y: auto;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li {
+    border-bottom: 1px solid rgb(0 0 0 / 8%);
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  /* Chevron affordance on drop items (has a mega panel). */
+  header nav .nav-sections .nav-drop > a::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    flex: none;
+    background-color: currentcolor;
+    mask: var(--icon-arrow-right) center / contain no-repeat;
+  }
+
+  /* The mega panel is hidden until its section is drilled into. */
+  header nav .nav-sections .nav-megamenu {
+    display: none;
+  }
+
+  /* --- DRILLED state: hide the level-1 list, show only the open section --- */
+  header nav .nav-sections.nav-drilled .default-content-wrapper > ul > li:not([aria-expanded='true']) {
+    display: none;
+  }
+
+  /* The open section's label row becomes the drilled panel's title. */
+  header nav .nav-sections.nav-drilled .default-content-wrapper > ul > li[aria-expanded='true'] > a {
+    font-size: 28px;
+  }
+
+  header nav .nav-sections.nav-drilled .default-content-wrapper > ul > li[aria-expanded='true'] > a::after {
+    /* title keeps a forward arrow (links to the section landing page) */
+    opacity: 0.6;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] .nav-megamenu {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 16px;
+  }
+
+  /* Back bar — only visible while drilled. */
+  header nav .nav-back {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 4px;
+    padding: 12px 0;
+    border: 0;
+    background: none;
+    color: var(--nav-link-color);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  header nav .nav-sections.nav-drilled .nav-back {
+    display: flex;
+  }
+
+  header nav .nav-back-icon {
+    width: 18px;
+    height: 18px;
+    background-color: currentcolor;
+
+    /* reuse the right arrow, flipped to point left */
+    mask: var(--icon-arrow-right) center / contain no-repeat;
+    transform: scaleX(-1);
+  }
+
+  /* Level-3 category accordion within a drilled section. */
+  header nav .nav-mega-col {
+    border-top: 1px solid rgb(0 0 0 / 8%);
+  }
+
+  header nav .nav-mega-col > h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: 16px 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+  }
+
+  header nav .nav-mega-col:not(.nav-mega-featured, .nav-mega-quicklinks) > h3::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    flex: none;
+    background-color: currentcolor;
+    mask: var(--icon-arrow-right) center / contain no-repeat;
+    transform: rotate(90deg);
+    transition: transform 0.2s ease;
+  }
+
+  header nav .nav-mega-col[aria-expanded='true'] > h3::after {
+    transform: rotate(-90deg);
+  }
+
+  /* collapse a category's body until expanded (quick links stay open, no h3) */
+  header nav .nav-mega-col:not(.nav-mega-featured, .nav-mega-quicklinks) > :not(h3) {
+    display: none;
+  }
+
+  header nav .nav-mega-quicklinks > h3 {
+    display: none;
+  }
+
+  header nav .nav-mega-col[aria-expanded='true']:not(.nav-mega-featured, .nav-mega-quicklinks) > :not(h3) {
+    display: block;
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-mega-col ul {
+    margin: 0 0 12px;
+    padding: 0;
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-mega-col li {
+    padding: 6px 0;
+    font-weight: 400;
+  }
+
+  header nav .nav-mega-col h4 {
+    margin: 12px 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(96 118 144);
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-mega-col a:any-link {
+    color: var(--nav-link-color);
+  }
+
+  /* summary ("Explore all …") + quick links → brand blue with arrow */
+  /* stylelint-disable no-descending-specificity */
+  header nav .nav-mega-col > p a:any-link,
+  header nav .nav-mega-quicklinks a:any-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--brand-blue);
+    font-weight: 600;
+  }
+
+  header nav .nav-mega-col > p a:any-link::after,
+  header nav .nav-mega-quicklinks a:any-link::after {
+    content: '';
+    width: 1em;
+    height: 1em;
+    background-color: currentcolor;
+    mask: var(--icon-arrow-right) center / contain no-repeat;
+  }
+
+  /* Featured box: always visible at the bottom of a drilled section. */
+  header nav .nav-mega-featured {
+    margin-top: 16px;
+    padding: 20px;
+    border-top: 0;
+    border-radius: var(--radius-card);
+    background-color: var(--section-dark-bg);
+    color: var(--section-light-text);
+  }
+
+  header nav .nav-mega-featured-blue { background-color: var(--nav-featured-blue-bg); }
+
+  /* Grey box: light surface → dark text (title/body inherit this). */
+  header nav .nav-mega-featured-grey {
+    background-color: var(--nav-featured-grey-bg);
+    color: var(--text-color);
+  }
+
+  header nav .nav-mega-featured-plain {
+    padding: 16px 0 0;
+    background-color: transparent;
+    color: var(--text-color);
+  }
+
+  header nav .nav-mega-featured h3 {
+    padding: 0;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--section-muted-text);
+    cursor: default;
+  }
+
+  header nav .nav-mega-featured-grey h3,
+  header nav .nav-mega-featured-plain h3 { color: rgb(96 118 144); }
+
+  header nav .nav-mega-featured h4 {
+    margin: 8px 0;
+    font-size: 18px;
+    color: inherit;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  header nav .nav-mega-featured p { color: inherit; }
+
+  /* Featured CTA link: white on the dark + blue boxes (else it disappears);
+     brand blue on the light grey/plain treatments. */
+  header nav .nav-mega-featured > p:last-child a:any-link,
+  header nav .nav-mega-featured-blue > p:last-child a:any-link {
+    color: #fff;
+  }
+
+  header nav .nav-mega-featured-grey > p:last-child a:any-link,
+  header nav .nav-mega-featured-plain > p:last-child a:any-link {
+    color: var(--brand-blue);
+  }
+
+  /* Tools row (Log In) pinned to the overlay bottom. */
+  header nav[aria-expanded='true'] .nav-tools {
+    order: 99;
+    margin-top: auto;
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgb(0 0 0 / 8%);
+  }
+
+  /* Mobile search: reveal a compact search icon in the toolbar (source shows a
+     magnifier). It expands the pill input on focus/tap. */
+  header nav .nav-search {
+    display: flex;
+    height: 40px;
+    padding: 0 6px 0 12px;
+  }
+
+  header nav[aria-expanded='false'] .nav-search {
+    background-color: transparent;
+  }
+
+  header nav[aria-expanded='false'] .nav-search .nav-search-input {
+    width: 0;
+    padding: 0;
+  }
+
+  header nav[aria-expanded='false'] .nav-search:focus-within {
+    background-color: rgb(238 238 238);
+  }
+
+  header nav[aria-expanded='false'] .nav-search:focus-within .nav-search-input {
+    width: 150px;
+  }
+
+  /* In the open overlay, show a full-width search field at the top of tools. */
+  header nav[aria-expanded='true'] .nav-search .nav-search-input {
+    width: 100%;
+  }
+
+  /* stylelint-enable no-descending-specificity */
+}
+
 @media (width >= 900px) {
   header nav .nav-sections {
     display: block;
@@ -228,17 +563,40 @@ header nav .nav-sections ul > li > ul > li {
     cursor: pointer;
   }
 
-  /* top-level label: hover/active gets brand-blue text + a blue underline */
+  /* top-level label: fills the full toolbar height so its bottom edge lines up
+     with the bottom of the nav toolbar. Hover/active gets brand-blue text + a
+     blue underline drawn as an ::after pinned to the toolbar bottom. */
   header nav .nav-sections .default-content-wrapper > ul > li > a {
-    display: inline-block;
-    padding: 8px 0;
-    border-bottom: 3px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    height: var(--nav-height);
+    padding: 0;
+    position: relative;
+  }
+
+  /* Blue underline: 3px tall, straddling the toolbar bottom edge (bottom:
+     -1.5px so it is centred on the edge). z-index keeps it painting ABOVE the
+     mega-menu panel (which sits directly below) so it is never clipped. */
+  header nav .nav-sections .default-content-wrapper > ul > li > a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1.5px;
+    height: 3px;
+    background-color: var(--brand-blue);
+    opacity: 0;
+    z-index: 11;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li:hover > a,
   header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > a {
     color: var(--brand-blue);
-    border-bottom-color: var(--brand-blue);
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:hover > a::after,
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > a::after {
+    opacity: 1;
   }
 
   /* --- mega-menu panel --- */
@@ -255,7 +613,13 @@ header nav .nav-sections ul > li > ul > li {
     right: 0;
     top: 100%;
     box-sizing: border-box;
-    padding: 40px max(24px, calc((100% - var(--content-max-width)) / 2)) 48px;
+
+    /* Align the mega panel's content edges with the page content. Sections use
+       padding-inline: max(32px, (100% - content-max-width)/2) at desktop
+       (styles.css), so the mega menu MUST use the same 32px floor — a 24px
+       floor let the panel content sit 8px further out than the page content
+       below ~1440px. */
+    padding: 40px max(32px, calc((100% - var(--content-max-width)) / 2)) 48px;
     background-color: var(--background-color);
     border-top: 1px solid rgb(0 0 0 / 8%);
     box-shadow: rgb(0 0 0 / 8%) 0 12px 16px -8px;
@@ -303,6 +667,15 @@ header nav .nav-sections ul > li > ul > li {
     color: var(--nav-link-color);
   }
 
+  /* Trailing summary link ("Shop all …"): match the list's vertical rhythm.
+     Each <li> has 6px top/bottom padding (→ 12px between link texts); the last
+     <li> leaves only 6px below, so add 6px on top of this <p> to make the gap
+     to the summary link a consistent 12px too. */
+  header nav .nav-sections .nav-mega-col > p {
+    margin: 0;
+    padding-top: 6px;
+  }
+
   /* "Shop all / Explore all" summary links render in brand blue with an arrow */
   /* stylelint-disable-next-line no-descending-specificity */
   header nav .nav-sections .nav-mega-col > p a:any-link {
@@ -313,8 +686,14 @@ header nav .nav-sections ul > li > ul > li {
     color: var(--brand-blue);
   }
 
+  /* stylelint-disable-next-line no-descending-specificity */
   header nav .nav-sections .nav-mega-col > p a:any-link::after {
-    content: '→';
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentcolor;
+    mask: var(--icon-arrow-right) center / contain no-repeat;
   }
 
   /* Featured card — dark panel like the source */
@@ -359,17 +738,207 @@ header nav .nav-sections ul > li > ul > li {
   }
 
   header nav .nav-sections .nav-mega-featured > p:last-child a:any-link::after {
-    content: '→';
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentcolor;
+    mask: var(--icon-arrow-right) center / contain no-repeat;
+  }
+
+  /* Featured background variants (source: the box colour differs per menu).
+     The base rule above is the dark-slate treatment (Explore, Learn). */
+
+  /* Blue box (Why DS sustainability) — keeps the light text of the base. */
+  header nav .nav-sections .nav-mega-featured-blue {
+    background-color: var(--nav-featured-blue-bg);
+  }
+
+  /* Grey box (Support) — light surface, so switch to dark text + blue CTA. */
+  header nav .nav-sections .nav-mega-featured-grey {
+    background-color: var(--nav-featured-grey-bg);
+  }
+
+  header nav .nav-sections .nav-mega-featured-grey h3 {
+    color: rgb(96 118 144);
+  }
+
+  header nav .nav-sections .nav-mega-featured-grey h4 {
+    color: var(--text-color);
+  }
+
+  header nav .nav-sections .nav-mega-featured-grey p {
+    color: var(--text-muted);
+  }
+
+  /* Plain (Why DS scholarship) — no box: transparent, no padding, dark text,
+     blue CTA. Sits on the white panel like the source. */
+  header nav .nav-sections .nav-mega-featured-plain {
+    padding: 0;
+    background-color: transparent;
+    color: var(--text-color);
+  }
+
+  header nav .nav-sections .nav-mega-featured-plain h3 {
+    color: rgb(96 118 144);
+  }
+
+  header nav .nav-sections .nav-mega-featured-plain h4 {
+    color: var(--text-color);
+  }
+
+  header nav .nav-sections .nav-mega-featured-plain p {
+    color: var(--text-muted);
+  }
+
+  /* Grey + plain CTAs render in brand blue (base CTA is white on dark). */
+  header nav .nav-sections .nav-mega-featured-grey > p:last-child a:any-link,
+  header nav .nav-sections .nav-mega-featured-plain > p:last-child a:any-link {
+    color: var(--brand-blue);
+  }
+
+  /* --- Explore mega menu (wide): 6 category columns on ONE row, then a second
+     row with the quick links (left) + the featured box (right). A 6-column
+     grid keeps the categories from wrapping; the quick-links + featured cells
+     are explicitly placed on row 2. Declared after the base .nav-mega-col
+     rules so its higher-specificity overrides cascade naturally. The selector
+     matches the expanded-panel specificity so `display: grid` beats the base
+     `display: flex` on the open mega panel. */
+  header nav .nav-sections .default-content-wrapper > ul
+    > li[aria-expanded='true'] .nav-megamenu.nav-megamenu-wide {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    align-items: start;
+    gap: 40px 32px;
+  }
+
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-col {
+    min-width: 0;
+    max-width: none;
+  }
+
+  /* Row 2, left: the quick links span the first three columns. */
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-quicklinks {
+    grid-column: 1 / 4;
+    grid-row: 2;
+  }
+
+  /* Hide the "Quick links" heading — the source shows only the two links. */
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-quicklinks h3 {
+    display: none;
+  }
+
+  /* Quick links render like the "Explore all …" summary links: brand blue with
+     a trailing arrow, and no list bullets/padding rhythm from the category
+     lists. */
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-quicklinks ul {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-quicklinks li {
+    padding: 0;
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-quicklinks a:any-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--brand-blue);
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-quicklinks a:any-link::after {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentcolor;
+    mask: var(--icon-arrow-right) center / contain no-repeat;
+  }
+
+  /* Row 2, right: the featured box occupies the last three columns. */
+  header nav .nav-sections .nav-megamenu-wide .nav-mega-featured {
+    grid-column: 4 / 7;
+    grid-row: 2;
+    max-width: none;
   }
 }
 
 /* tools */
 header nav .nav-tools {
   grid-area: tools;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 header nav .nav-tools p {
   margin: 0;
+}
+
+/* --- Search bar (rounded light-grey pill, magnifier + input) ---
+   Shown in the desktop toolbar only (revealed in the >=900px block below);
+   hidden on mobile where the toolbar collapses to the hamburger. */
+header nav .nav-search {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 44px;
+  padding: 0 8px 0 16px;
+  border-radius: var(--radius-pill);
+  background-color: rgb(238 238 238); /* light grey, matches source */
+}
+
+header nav .nav-search-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgb(96 118 144); /* muted slate magnifier */
+  cursor: pointer;
+}
+
+header nav .nav-search-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentcolor;
+}
+
+header nav .nav-search-input {
+  width: 180px;
+  border: 0;
+  background: none;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  line-height: 1.25;
+  outline: none;
+}
+
+header nav .nav-search-input::placeholder {
+  color: rgb(96 118 144);
+  opacity: 1;
+}
+
+/* hide the native search clear/decoration for a clean pill */
+header nav .nav-search-input::-webkit-search-decoration,
+header nav .nav-search-input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+/* Reveal the search pill in the desktop toolbar (declared AFTER the base
+   display:none so it wins the later-declaration cascade). */
+@media (width >= 900px) {
+  header nav .nav-search {
+    display: flex;
+  }
 }
 
 header nav .nav-tools a:any-link {

@@ -87,6 +87,10 @@
   --nav-link-weight: 500;
   --nav-login-bg: rgb(51 63 76);   /* dark slate pill */
 
+  /* mega-menu featured box backgrounds (per source, vary by menu) */
+  --nav-featured-blue-bg: rgb(1 59 168);   /* Why DS sustainability box */
+  --nav-featured-grey-bg: rgb(238 238 238); /* Support box */
+
   /* ---- Footer ---- */
   --footer-bg: rgb(25 30 36);      /* #191e24 near-black */
   --footer-text: rgb(217 228 240); /* #d9e4f0 links/body */
@@ -94,4 +98,13 @@
   --footer-accent: rgb(255 167 2); /* #ffa702 orange accent links */
   --footer-muted: rgb(194 204 214); /* #c2ccd6 copyright */
   --footer-divider: rgb(255 255 255 / 15%);
+  --footer-social-icon: rgb(250 250 250); /* white brand glyphs (fb/insta/li) */
+
+  /* ---- Icons ---- */
+
+  /* The source's "ArrowRightRegular" glyph (SVG sprite, viewBox 0 0 60 60),
+     as a data-URI. Applied via mask-image so a ::after arrow inherits the
+     link colour through `background-color: currentColor`. See the shared
+     `.cta-arrow` treatment in styles.css. */
+  --icon-arrow-right: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2060%2060%22%3E%3Cpath%20d=%22M51.9516%2031.3257L35.0766%2048.2007C34.7247%2048.5525%2034.2476%2048.7501%2033.75%2048.7501C33.2524%2048.7501%2032.7753%2048.5525%2032.4234%2048.2007C32.0716%2047.8488%2031.874%2047.3717%2031.874%2046.8741C31.874%2046.3765%2032.0716%2045.8994%2032.4234%2045.5475L46.0992%2031.8741H9.375C8.87772%2031.8741%208.40081%2031.6765%208.04918%2031.3249C7.69754%2030.9733%207.5%2030.4964%207.5%2029.9991C7.5%2029.5018%207.69754%2029.0249%208.04918%2028.6733C8.40081%2028.3216%208.87772%2028.1241%209.375%2028.1241H46.0992L32.4234%2014.4507C32.0716%2014.0988%2031.874%2013.6216%2031.874%2013.1241C31.874%2012.6265%2032.0716%2012.1494%2032.4234%2011.7975C32.7753%2011.4457%2033.2524%2011.248%2033.75%2011.248C34.2476%2011.248%2034.7247%2011.4457%2035.0766%2011.7975L51.9516%2028.6725C52.1259%2028.8467%2052.2642%2029.0535%2052.3586%2029.2811C52.4529%2029.5087%2052.5015%2029.7527%2052.5015%2029.9991C52.5015%2030.2455%2052.4529%2030.4895%2052.3586%2030.7171C52.2642%2030.9447%2052.1259%2031.1515%2051.9516%2031.3257Z%22%20fill=%22%23000%22/%3E%3C/svg%3E");
 }

@@ -80,13 +80,15 @@ main .section .hero-home-wrapper + .carousel-promo-wrapper {
   border-radius: var(--radius-image);
 }
 
-/* promo cards: the source product render is ~374x298 (5:4) and is object-fit
-   contained (transparent PNG), not cropped. Cap its height so the card stays
-   ~502px tall like the source instead of ballooning. */
+/* promo cards: the source renders the product tile at ~374x298 (5:4) and
+   object-fit COVERs it (the natural rendition is a ~300x300 square, restored
+   from the wide wid=2000 strip by toNaturalTileUrl in carousel-promo.js), so
+   the product fills the image box like the source instead of shrinking to a
+   thin sliver. */
 .carousel-promo .carousel-promo-slide-promo .carousel-promo-slide-image img {
   aspect-ratio: 5 / 4;
   max-height: 298px;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 /* --- content --- */
@@ -97,8 +99,9 @@ main .section .hero-home-wrapper + .carousel-promo-wrapper {
   text-align: center;
 }
 
-/* course cards (image, then title, then link) are left-aligned */
-.carousel-promo .carousel-promo-slide-content:has(> h6:first-child) {
+/* course cards (eyebrow, title, link) are left-aligned. Course cards are the
+   slides WITHOUT the -promo modifier (promo cards keep centered content). */
+.carousel-promo .carousel-promo-slide:not(.carousel-promo-slide-promo) .carousel-promo-slide-content {
   text-align: left;
 }
 
@@ -162,9 +165,12 @@ main .section .carousel-promo .carousel-promo-slide-content h6 {
 }
 
 .carousel-promo .carousel-promo-cta-tertiary a::after {
-  content: '→';
-  font-size: 18px;
-  line-height: 1;
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-color: currentcolor;
+  mask: var(--icon-arrow-right) center / contain no-repeat;
 }
 
 .carousel-promo .carousel-promo-cta-tertiary a:hover {
@@ -172,10 +178,10 @@ main .section .carousel-promo .carousel-promo-slide-content h6 {
   text-decoration: none;
 }
 
-/* Course cards (heading-led slides): the source renders "Enroll now" in brand
+/* Course cards (non-promo slides): the source renders "Enroll now" in brand
    blue rather than the near-black used by promo tertiary links. */
 /* stylelint-disable-next-line no-descending-specificity */
-.carousel-promo .carousel-promo-slide-content:has(> h6:first-child) .carousel-promo-cta-tertiary a {
+.carousel-promo .carousel-promo-slide:not(.carousel-promo-slide-promo) .carousel-promo-cta-tertiary a {
   color: var(--brand-blue);
 }
 
@@ -188,6 +194,7 @@ main .section .carousel-promo .carousel-promo-slide-content h6 {
   background-color: var(--brand-blue);
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 .carousel-promo .carousel-promo-cta-primary a:hover {
   background-color: var(--brand-blue-hover);
   color: #fff;

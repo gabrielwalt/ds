@@ -5,7 +5,8 @@
  *     > .section:nth-child(1)             six link columns
  *         > div (x6) > div > (h3 + ul>li>a)
  *     > .section:nth-child(2)             locale + social
- *         > .default-content-wrapper > p (locale) + p (social a's)
+ *         > .default-content-wrapper > p.footer-region (globe + locale)
+ *                                       + p.footer-social (social icon links)
  *     > .section:nth-child(3)             legal bar
  *         > .default-content-wrapper > p (copyright) + p (legal a's)
  * All colors/spacing use tokens from brand.css. Mobile-first, min-width only.
@@ -23,12 +24,22 @@ footer .footer > div {
   padding: 48px 0 24px;
 }
 
-/* Each section centered at the brand content width */
+/* Each section spans the full width but keeps its content aligned to the SAME
+   left/right edges as the page content. Page sections use
+   padding-inline: max(24px, (100% - content-max-width)/2) on mobile and
+   max(32px, …) at desktop (styles.css), so the footer mirrors both floors to
+   line up edge-for-edge (a fixed 24px floor sat 8px wider than page content
+   below ~1440px). */
 footer .footer .section {
   box-sizing: border-box;
-  margin: 0 auto;
-  max-width: var(--content-max-width);
-  padding: 0 24px;
+  margin: 0;
+  padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
+}
+
+@media (width >= 900px) {
+  footer .footer .section {
+    padding-inline: max(32px, calc((100% - var(--content-max-width)) / 2));
+  }
 }
 
 footer .footer p {
@@ -76,23 +87,81 @@ footer .footer .section:first-child {
   padding-bottom: 40px;
 }
 
+/* ---- Inline glyphs on links (external link, phone) ---- */
+footer .footer a.footer-link-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+footer .footer .footer-icon {
+  flex: none;
+  fill: currentcolor;
+}
+
+/* the external-link glyph trails the label a touch smaller + slightly muted */
+footer .footer a.footer-link-external .footer-icon-externallink {
+  opacity: 0.8;
+}
+
+/* ---- Accent (orange) links — Explore all…, Investors, Apply for Net terms,
+   Contact us. Rendered bold + orange to signal the different colour clearly. */
+footer .footer a.footer-link-accent {
+  color: var(--footer-accent);
+  font-weight: 700;
+}
+
+footer .footer a.footer-link-accent:hover,
+footer .footer a.footer-link-accent:focus-visible {
+  color: var(--footer-accent);
+  text-decoration: underline;
+}
+
 /* ---- Section 2: locale + social (divider above) ---- */
 footer .footer .section:nth-child(2) .default-content-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-top: 32px;
+  gap: 20px;
+  padding-top: 28px;
   border-top: 1px solid var(--footer-divider);
 }
 
-footer .footer .section:nth-child(2) p:last-child {
+/* Region label: globe glyph + locale name, vertically centered */
+footer .footer .footer-region {
   display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
+  align-items: center;
+  gap: 10px;
+  color: var(--footer-text);
+  font-size: 16px;
 }
 
-footer .footer .section:nth-child(2) a {
+footer .footer .footer-region .footer-icon {
   color: var(--footer-text);
+}
+
+/* Social row: white brand glyphs in a row */
+footer .footer .footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+footer .footer a.footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--footer-social-icon);
+}
+
+footer .footer a.footer-social-link:hover,
+footer .footer a.footer-social-link:focus-visible {
+  color: var(--footer-heading);
+  text-decoration: none;
+}
+
+footer .footer a.footer-social-link .footer-icon {
+  color: inherit;
 }
 
 /* ---- Section 3: legal bar (divider above) ---- */
@@ -117,22 +186,16 @@ footer .footer .section:nth-child(3) p:last-child {
   gap: 8px 16px;
 }
 
+/* Legal links are the least-bright text in the footer (source: muted slate) */
 footer .footer .section:nth-child(3) a {
   position: relative;
   color: var(--footer-muted);
   font-size: 12px;
 }
 
-/* Accent: the Contact column (last column) holds a single link, rendered
-   orange to match the source. Placed here to satisfy no-descending-specificity. */
-footer .footer .section:first-child > div:last-child a {
-  color: var(--footer-accent);
-}
-
-footer .footer .section:first-child > div:last-child a:hover,
-footer .footer .section:first-child > div:last-child a:focus-visible {
-  color: var(--footer-accent);
-  text-decoration: underline;
+footer .footer .section:nth-child(3) a:hover,
+footer .footer .section:nth-child(3) a:focus-visible {
+  color: var(--footer-text);
 }
 
 /* Pipe separators between legal links */
@@ -146,6 +209,59 @@ footer .footer .section:nth-child(3) p:last-child a:not(:last-child)::after {
   transform: translateY(-50%);
 }
 
+/* ---- Phone (< 600px): collapse each multi-link column into an accordion so
+   the footer isn't an endless stacked list (matches the source). Headings with
+   a chevron toggle their link list; single-link columns (Contact) stay open. */
+@media (width < 600px) {
+  footer .footer .section:first-child {
+    gap: 0;
+    padding-bottom: 24px;
+  }
+
+  footer .footer .footer-col-accordion {
+    border-bottom: 1px solid var(--footer-divider);
+  }
+
+  footer .footer .footer-col-accordion > h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: 16px 0;
+    cursor: pointer;
+  }
+
+  /* down-chevron that flips when the column is open */
+  footer .footer .footer-col-accordion > h3::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    flex: none;
+    background-color: currentcolor;
+    mask: var(--icon-arrow-right) center / contain no-repeat;
+    transform: rotate(90deg);
+    transition: transform 0.2s ease;
+  }
+
+  footer .footer .footer-col-accordion[aria-expanded='true'] > h3::after {
+    transform: rotate(-90deg);
+  }
+
+  /* collapse the link list until the column is expanded */
+  footer .footer .footer-col-accordion > ul {
+    display: none;
+  }
+
+  footer .footer .footer-col-accordion[aria-expanded='true'] > ul {
+    display: block;
+    padding-bottom: 12px;
+  }
+
+  footer .footer .footer-col-accordion li {
+    line-height: 2.2;
+  }
+}
+
 /* ---- Tablet: columns wrap to a few per row ---- */
 @media (width >= 600px) {
   footer .footer .section:first-child {
@@ -157,10 +273,6 @@ footer .footer .section:nth-child(3) p:last-child a:not(:last-child)::after {
 @media (width >= 900px) {
   footer .footer > div {
     padding: 64px 0 32px;
-  }
-
-  footer .footer .section {
-    padding: 0 32px;
   }
 
   footer .footer .section:first-child {

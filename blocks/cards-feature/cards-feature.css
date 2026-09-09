@@ -38,12 +38,41 @@ main .section.cards-feature-container > .default-content-wrapper {
   text-align: left;
 }
 
-/* Each authored card block becomes one grid cell */
+/* Trailing CTA wrapper (e.g. the "Visit support" pill after the §9 cards):
+   push it further down below the card grid and drop the heading-gap it would
+   otherwise carry as a bottom margin. */
+main .section.cards-feature-container > .default-content-wrapper:last-child {
+  margin: var(--section-heading-gap) 0 0;
+}
+
+/* Each authored card block becomes one grid cell. It is a flex column so its
+   inner .cards-feature > ul > li can fill the wrapper's stretched height via
+   flex-grow — without forcing height:100% down the chain (which made a card
+   whose content is taller than the stretched height overflow past the wrapper
+   and eat into the section's bottom padding). */
 main .section.cards-feature-container > .cards-feature-wrapper {
+  display: flex;
   flex: 1 1 100%;
   max-width: none;
   margin: 0;
   padding: 0;
+}
+
+main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Tablet: 2 cards per row (a single full-width card looks over-stretched with
+   its icon marooned in the middle). basis ~45% lets two cards + the grid gap
+   fit; wrapping leaves a lone third card centered on its own row. */
+@media (width >= 600px) {
+  main .section.cards-feature-container > .cards-feature-wrapper {
+    flex: 1 1 calc(50% - var(--grid-gap));
+    max-width: calc(50% - var(--grid-gap) / 2);
+  }
 }
 
 @media (width >= 900px) {
@@ -55,6 +84,7 @@ main .section.cards-feature-container > .cards-feature-wrapper {
     /* basis 260px lets 4 cards fit one row (4*260 + 3*24 = 1112) and
        3-card sections fill the row 3-across */
     flex: 1 1 260px;
+    max-width: none;
   }
 }
 
@@ -72,13 +102,18 @@ main .section.cards-feature-container > .cards-feature-wrapper {
   list-style: none;
   margin: 0;
   padding: 0;
-  height: 100%;
+
+  /* fill the flex-column wrapper (flex-grow) rather than height:100%, so tall
+     content grows the card instead of overflowing past the stretched box. */
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
 }
 
 .cards-feature > ul > li {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1 1 auto;
   padding: var(--card-padding);
 }
 
@@ -103,6 +138,7 @@ main .section.cards-feature-container > .cards-feature-wrapper {
   background-color: rgb(246 246 246); /* source §9 light-grey tile */
   box-shadow: none;
   text-align: left;
+  padding-bottom: 16px; /* tighter bottom padding (source cards aren't tall) */
 }
 
 /* Icon / illustration */
@@ -193,8 +229,20 @@ main .section.cards-feature-container > .cards-feature-wrapper {
   margin-bottom: 8px;
 }
 
+/* Icon-led cards (§5/§7/§9): tighten the title→description gap too. */
+.cards-feature > ul > li:not(:has(.cards-feature-card-image)) .cards-feature-card-body h5,
+.cards-feature > ul > li:not(:has(.cards-feature-card-image)) .cards-feature-card-body h6 {
+  margin-bottom: 8px;
+}
+
+.cards-feature > ul > li:not(:has(.cards-feature-card-image)) .cards-feature-card-body p {
+  margin-top: 0;
+  font-weight: 300; /* slightly lighter description text */
+}
+
 /* "Learn more" link — sits just below the description (not pinned to the card
    bottom, which left too big a gap after short descriptions). */
+/* stylelint-disable-next-line no-descending-specificity */
 .cards-feature .cards-feature-card-body p:last-child {
   margin: 16px 0 0;
 }
@@ -210,10 +258,15 @@ main .section.cards-feature-container > .cards-feature-wrapper {
   text-decoration: none;
 }
 
-/* trailing arrow, matching the source CTA treatment */
+/* trailing arrow — the source "ArrowRightRegular" SVG glyph, masked so it
+   inherits the link colour via currentColor. */
 .cards-feature .cards-feature-card-body a:any-link::after {
-  content: "→";
-  font-weight: 600;
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: var(--icon-arrow-right) center / contain no-repeat;
   transition: transform 0.2s ease;
 }
 

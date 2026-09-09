@@ -1,3 +1,24 @@
+/**
+ * Normalise a Scene7 product-tile URL to its natural (authored) rendition.
+ *
+ * The DM auto-block renders promo images with a `wid=2000` (+ `fmt`/`dpr`)
+ * override. Combined with the source's `$transparent-image$` preset — which
+ * caps height at 300px — Scene7 returns a 2000x300 strip. `object-fit:contain`
+ * then shrinks that strip to ~56px tall inside the 374x298 image box, so the
+ * product renders tiny. The source uses the bare URL (`?ts=…&$transparent-
+ * image$&dpr=off`) which returns the natural ~300x300 square. Dropping the
+ * `wid`/`hei`/`fmt`/`dpr` params restores that square. Keeps other params.
+ */
+function toNaturalTileUrl(src) {
+  try {
+    const u = new URL(src, window.location.href);
+    ['wid', 'hei', 'fmt', 'dpr'].forEach((param) => u.searchParams.delete(param));
+    return u.toString();
+  } catch (e) {
+    return src;
+  }
+}
+
 function updateActiveSlide(slide) {
   const block = slide.closest('.carousel-promo');
   const slideIndex = parseInt(slide.dataset.slideIndex, 10);
@@ -99,7 +120,19 @@ function createSlide(row, slideIndex, carouselId) {
       slide.classList.add('carousel-promo-slide-promo');
       const primary = ctas[ctas.length - 1];
       primary.classList.add('carousel-promo-cta-primary');
-      if (image) slide.append(image); // move image below the text content
+      if (image) {
+        // Point the transparent product tile at its natural ~300x300 rendition
+        // instead of the wid=2000 (2000x300) strip, so it fills the card image
+        // box instead of shrinking to a thin sliver. Drop the wide <source>
+        // renditions so the browser can't re-select the 2000px strip.
+        const original = image.querySelector('img');
+        if (original) {
+          original.src = toNaturalTileUrl(original.src);
+          if (original.srcset) original.srcset = toNaturalTileUrl(original.srcset);
+          image.querySelectorAll('source').forEach((s) => s.remove());
+        }
+        slide.append(image); // move image below the text content
+      }
       slide.append(primary); // move the filled pill to the bottom of the card
     }
 

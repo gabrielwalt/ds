@@ -30,6 +30,16 @@
   --heading-font-size-m: 26px;
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 21px;
+
+  /* smaller vertical section padding on phones (brand.css sets the 64px
+     desktop value; stepped back up at >=600px below) */
+  --section-padding-block: 40px;
+}
+
+@media (width >= 600px) {
+  :root {
+    --section-padding-block: 64px;
+  }
 }
 
 /* fallback fonts */
@@ -296,10 +306,34 @@ main img {
 
 /* sections — no vertical margin between sections, so adjacent section
    backgrounds touch edge-to-edge with no white gap. Consistent top/bottom
-   padding is applied per section below. */
+   padding is applied per section below.
+   --section-padding-block steps from 40px on phones up to 64px at tablet (the
+   64px default lives in brand.css :root; the mobile override sits in the
+   existing :root block near the top of this file) so small screens aren't
+   dominated by whitespace. Every section variant inherits it via the token. */
 main > .section {
   margin: 0;
   padding: var(--section-padding-block) 0;
+}
+
+/* The first section (hero teaser) sits flush against the top nav toolbar — no
+   top padding/margin pushing it down. */
+main > .section:first-child {
+  padding-top: 0;
+}
+
+/* Consistent vertical rhythm: the section's 64px top/bottom padding should be
+   the ACTUAL gap around its content. Global headings/paragraphs carry a
+   margin-top (0.8em) that otherwise stacks on top of the padding — inflating
+   the top gap to ~102px while the bottom stays 64px. Collapse the leading
+   margin of a section's first content element and the trailing margin of its
+   last, so both gaps equal the padding. */
+main > .section > div:first-child > :first-child {
+  margin-top: 0;
+}
+
+main > .section > div:last-child > :last-child {
+  margin-bottom: 0;
 }
 
 main > .section > div {
@@ -376,4 +410,24 @@ main .section.blue h6 {
 
 main .section.blue a:any-link {
   color: var(--section-light-text);
+}
+
+/* On the blue advantage banner the section heading + subtitle stay LEFT-aligned
+   (only teasers/card items are centered on this page). */
+main .section.blue > .default-content-wrapper {
+  text-align: left;
+}
+
+/* The "Learn more" CTA matches the previous section's "Explore Academy" pill
+   (blue fill, white text, pill radius) but gains a white outline so it reads
+   against the blue banner background. */
+main .section.blue a.button.primary {
+  border-color: #fff;
+  color: #fff;
+}
+
+main .section.blue a.button.primary:hover,
+main .section.blue a.button.primary:focus-visible {
+  border-color: #fff;
+  color: #fff;
 }

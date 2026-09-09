@@ -101,6 +101,24 @@
   content: none;
 }
 
+/* Tablet: step the hero up between the 36px mobile and 69px desktop sizes so
+   the headline doesn't jump abruptly, and give the hero a bit more height. */
+@media (width >= 600px) {
+  .hero-home {
+    min-height: 560px;
+    padding: 80px 32px;
+  }
+
+  .hero-home h1 {
+    font-size: 52px;
+    letter-spacing: -1.3px;
+  }
+
+  .hero-home p {
+    font-size: 20px;
+  }
+}
+
 @media (width >= 900px) {
   .hero-home {
     min-height: 640px; /* source measured height */

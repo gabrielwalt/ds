@@ -246,7 +246,9 @@ var CustomImportScript = (() => {
     if (hookName === TransformHook.beforeTransform) {
       WebImporter.DOMUtils.remove(element, [
         "#onetrust-consent-sdk",
-        ".onetrust-pc-dark-filter"
+        ".onetrust-pc-dark-filter",
+        ".legal-popup",
+        ".global-legal-popup"
       ]);
       element.querySelectorAll('img[src^="data:image/svg"]').forEach((img) => img.remove());
       element.querySelectorAll("svg").forEach((svg) => svg.remove());

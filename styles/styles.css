@@ -346,13 +346,20 @@ main > .section > div:last-child > :last-child {
  * .default-content-wrapper (a CTA like "Explore Academy" / "Visit support").
  * These two rules set the SAME vertical gap around the cards for every section
  * from one place, so individual blocks don't each redefine it. A block can
- * still override locally when it genuinely needs a different rhythm. */
+ * still override locally when it genuinely needs a different rhythm.
+ *
+ * Only the BLOCK (vertical) margin is set here — never the shorthand. These
+ * rules are more specific than the `main > .section > div { margin: auto }`
+ * container rule below, so a `margin: … 0 …` shorthand would zero the inline
+ * margins and defeat the auto-centering, dropping the title/CTA flush-left of
+ * the content box (out of alignment with neighbouring sections). Using
+ * `margin-block` leaves inline centering intact. */
 main > .section > .default-content-wrapper:first-child {
-  margin: 0 0 var(--section-heading-gap);
+  margin-block: 0 var(--section-heading-gap);
 }
 
 main > .section > .default-content-wrapper:last-child:not(:first-child) {
-  margin: var(--section-heading-gap) 0 0;
+  margin-block: var(--section-heading-gap) 0;
 }
 
 main > .section > div {

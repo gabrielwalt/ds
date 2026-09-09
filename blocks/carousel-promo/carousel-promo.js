@@ -183,10 +183,24 @@ function createSlide(row, slideIndex, carouselId) {
   const content = slide.querySelector('.carousel-promo-slide-content');
   const image = slide.querySelector('.carousel-promo-slide-image');
   if (content) {
-    const ctas = [...content.querySelectorAll(':scope > p')].filter((p) => p.querySelector('a'));
+    const ctaParas = [...content.querySelectorAll(':scope > p')].filter((p) => p.querySelector('a'));
     const headingFirst = content.firstElementChild
       && /^H[1-6]$/.test(content.firstElementChild.tagName);
-    ctas.forEach((p) => p.classList.add('carousel-promo-cta'));
+
+    // Wrap each authored CTA <p> in a GENERATED <div> that carries the layout
+    // class, rather than tagging the <p> itself. The <p> is author-editable, so
+    // in the WYSIWYG editor it is rebuilt/replaced mid-session — any class set
+    // on it is lost and `.carousel-promo-cta a` stops matching, breaking the
+    // button styling. The wrapper is block-generated (never instrumented as
+    // editable), so its class survives editor swaps; the authored <p> moves in
+    // whole and the `.carousel-promo-cta a` descendant selector still resolves.
+    const ctas = ctaParas.map((p) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'carousel-promo-cta';
+      p.replaceWith(wrapper);
+      wrapper.append(p);
+      return wrapper;
+    });
 
     // Promo card = eyebrow-led with two CTAs: the last CTA is a filled pill that
     // sits below the image; the course card is heading-led with a single tertiary
@@ -211,9 +225,9 @@ function createSlide(row, slideIndex, carouselId) {
       slide.append(primary); // move the filled pill to the bottom of the card
     }
 
-    ctas.forEach((p) => {
-      if (!p.classList.contains('carousel-promo-cta-primary')) {
-        p.classList.add('carousel-promo-cta-tertiary');
+    ctas.forEach((cta) => {
+      if (!cta.classList.contains('carousel-promo-cta-primary')) {
+        cta.classList.add('carousel-promo-cta-tertiary');
       }
     });
   }

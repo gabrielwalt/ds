@@ -60,7 +60,6 @@ main .section .hero-home-wrapper + .carousel-promo-wrapper {
    artwork carries its own transparent whitespace at the base, so an extra
    bottom gutter only made the card feel taller. */
 .carousel-promo .carousel-promo-slide-promo {
-  justify-content: space-between;
   padding-bottom: 0;
 }
 
@@ -140,12 +139,19 @@ main .section .carousel-promo .carousel-promo-slide-content h6 {
 }
 
 /* --- buttons (paragraphs containing a link) ---
-   CTA paragraphs are tagged by the block JS: `.carousel-promo-cta-tertiary`
-   (transparent text link with → arrow) and `.carousel-promo-cta-primary`
-   (filled blue pill). Both hug their content rather than stretching. */
-.carousel-promo .carousel-promo-cta {
+   Each CTA is a GENERATED `<div>` wrapper (added by the block JS) that carries
+   the layout class — `.carousel-promo-cta-tertiary` (transparent text link with
+   → arrow) or `.carousel-promo-cta-primary` (filled blue pill) — around the
+   authored `<p><a>`. The class lives on the wrapper, not the editable `<p>`, so
+   it survives the WYSIWYG editor's mid-session rebuild of authored elements.
+   Zero the wrapper AND the inner authored `<p>` margins so the button hugs its
+   content rather than stretching or inheriting the global paragraph spacing. */
+/* stylelint-disable no-descending-specificity */
+.carousel-promo .carousel-promo-cta,
+.carousel-promo .carousel-promo-cta > p {
   margin: 0;
 }
+/* stylelint-enable no-descending-specificity */
 
 .carousel-promo .carousel-promo-cta a {
   display: inline-flex;

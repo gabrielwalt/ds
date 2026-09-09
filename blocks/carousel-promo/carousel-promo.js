@@ -89,11 +89,25 @@ function bindEvents(block) {
     });
   });
 
+  // Derive the current slide from the track's actual scroll position rather
+  // than dataset.activeSlide: the latter is only set by the IntersectionObserver
+  // (threshold 0.5), so it can be undefined at first interaction — which made
+  // `parseInt(undefined) ± 1` = NaN and the arrows scroll nowhere ("did
+  // nothing"). Picking the first slide whose offset is at/after scrollLeft is
+  // robust from the initial state onward.
+  const currentIndex = () => {
+    const slides = [...block.querySelectorAll('.carousel-promo-slide')];
+    const track = block.querySelector('.carousel-promo-slides');
+    const sl = track ? track.scrollLeft : 0;
+    const idx = slides.findIndex((s) => s.offsetLeft >= sl - 1);
+    return idx < 0 ? slides.length - 1 : idx;
+  };
+
   block.querySelector('.slide-prev').addEventListener('click', () => {
-    showSlide(block, parseInt(block.dataset.activeSlide, 10) - 1);
+    showSlide(block, currentIndex() - 1);
   });
   block.querySelector('.slide-next').addEventListener('click', () => {
-    showSlide(block, parseInt(block.dataset.activeSlide, 10) + 1);
+    showSlide(block, currentIndex() + 1);
   });
 
   const slideObserver = new IntersectionObserver((entries) => {

@@ -246,9 +246,13 @@ main .section .carousel-promo .carousel-promo-slide-content h6 {
 }
 
 /* JS hides the prev arrow at the start / next arrow at the end (source
-   behaviour). [hidden] must beat the button's own display. */
+   behaviour). Use visibility (not display:none) so the hidden arrow keeps its
+   slot in the space-between flex row — otherwise a lone remaining arrow slides
+   to the opposite edge (the "next" arrow ended up on the LEFT at the start).
+   visibility:hidden also removes it from the tab/click flow. */
 .carousel-promo .carousel-promo-navigation-buttons button[hidden] {
-  display: none;
+  display: block;
+  visibility: hidden;
 }
 
 .carousel-promo .carousel-promo-navigation-buttons button:hover,

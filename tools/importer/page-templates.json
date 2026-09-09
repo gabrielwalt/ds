@@ -152,6 +152,97 @@
           ]
         }
       ]
+    },
+    {
+      "name": "toplevel",
+      "description": "Dentsply Sirona en-us top-level pages (Explore, Learn, Why DS, Support). Reuses homepage blocks (hero, cards-overlay, cards-feature, carousel-promo) plus accordion (Support FAQ) and video (Learn) blocks.",
+      "urls": [
+        "https://www.dentsplysirona.com/en-us/explore.html",
+        "https://www.dentsplysirona.com/en-us/learn.html",
+        "https://www.dentsplysirona.com/en-us/why-ds.html",
+        "https://www.dentsplysirona.com/en-us/support.html"
+      ],
+      "blocks": [
+        {
+          "name": "hero-home",
+          "instances": [
+            ".hero.cmp-hero__banner-center--large",
+            ".hero"
+          ]
+        },
+        {
+          "name": "cards-overlay",
+          "instances": [
+            ".imagetile"
+          ]
+        },
+        {
+          "name": "cards-feature",
+          "instances": [
+            ".iconcard",
+            ".teaser.basemarketingproperties"
+          ]
+        },
+        {
+          "name": "carousel-promo",
+          "instances": [
+            ".slider-container",
+            ".course-card-slider.contentfragmentlist"
+          ]
+        },
+        {
+          "name": "cards-quote",
+          "instances": [
+            ".quotecard"
+          ]
+        },
+        {
+          "name": "accordion",
+          "instances": [
+            ".accordion.panelcontainer",
+            ".cmp-accordion"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoslider"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "shop",
+      "description": "Dentsply Sirona en-us Shop landing page. Reuses hero-home and cards-feature (banner + promotion teasers); adds cards-promo (eyebrow promo cards) and cards-category (icon-label tiles for top categories + top brands). The 'Shop featured products' React commerce carousel is client-hydrated and does not import.",
+      "urls": [
+        "https://www.dentsplysirona.com/en-us/shop.html"
+      ],
+      "blocks": [
+        {
+          "name": "hero-home",
+          "instances": [
+            ".hero.cmp-shophero__anonymous"
+          ]
+        },
+        {
+          "name": "cards-promo",
+          "instances": [
+            ".promocards.cmp-shop--promocards"
+          ]
+        },
+        {
+          "name": "cards-category",
+          "instances": [
+            ".bootstrap-grid:has(.cmp-iconcard__wrapper-anchor):not(:has(.bootstrap-grid .cmp-iconcard__wrapper-anchor))"
+          ]
+        },
+        {
+          "name": "cards-feature",
+          "instances": [
+            ".teaser.basemarketingproperties"
+          ]
+        }
+      ]
     }
   ]
 }

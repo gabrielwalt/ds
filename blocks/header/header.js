@@ -23,17 +23,19 @@ function closeOnEscape(e) {
 }
 
 function closeOnFocusLost(e) {
+  // Desktop only: collapse an open mega panel when focus leaves the nav. On
+  // mobile the menu is a full-screen overlay dismissed via the hamburger X /
+  // back bar / outside click — NOT on focusout (tapping a menu item shifts
+  // focus and would otherwise close the whole overlay before the drill-in).
+  if (!isDesktop.matches) return;
   const nav = e.currentTarget;
   if (!nav.contains(e.relatedTarget)) {
     const navSections = nav.querySelector('.nav-sections');
     if (!navSections) return;
     const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
-    if (navSectionExpanded && isDesktop.matches) {
+    if (navSectionExpanded) {
       // eslint-disable-next-line no-use-before-define
       toggleAllNavSections(navSections, false);
-    } else if (!isDesktop.matches) {
-      // eslint-disable-next-line no-use-before-define
-      toggleMenu(nav, navSections, false);
     }
   }
 }

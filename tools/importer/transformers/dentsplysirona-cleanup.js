@@ -25,6 +25,32 @@ export default function transform(hookName, element, payload) {
       '.global-legal-popup',
     ]);
 
+    // Orphan "Browse by category/goal/topic:" titles. On the top-level pages
+    // (Explore/Learn/Why DS) these label an interactive category-browser widget
+    // that is client-side hydrated and never imports — leaving just the bare
+    // heading. Drop the heading so no empty labelled section is emitted.
+    element.querySelectorAll('.cmp-title__text, h1, h2, h3, h4, h5, h6').forEach((h) => {
+      if (/^browse by\b.*:?\s*$/i.test(h.textContent.trim())) {
+        const wrapper = h.closest('.title') || h;
+        wrapper.remove();
+      }
+    });
+
+    // Shop page: remove the HIDDEN signed-in hero variant and any personalized
+    // greeting placeholders. The Shop hero ships two variants — an anonymous
+    // one (visible) and a signed-in one (`.cmp-shophero__signin`, carrying the
+    // `hidden` class) that holds dynamic "Welcome, $Firstname!" text swapped in
+    // client-side after auth. That placeholder is not authorable content, so it
+    // must not land in the imported page. Drop the hidden signin hero outright,
+    // then remove any leftover greeting paragraphs.
+    element.querySelectorAll('.cmp-shophero__signin, .hero.hidden').forEach((el) => el.remove());
+    element.querySelectorAll('p, span, div').forEach((el) => {
+      const t = el.textContent.trim();
+      if (/^welcome,?\s*\$?\{?firstname\}?!?$/i.test(t) || /^welcome!$/i.test(t)) {
+        el.remove();
+      }
+    });
+
     // Remove decorative inline-SVG UI icons (arrows, icon-card glyphs, sprite
     // sheets). The source embeds ~150 of these as huge `data:image/svg+xml;
     // base64,...` <img> and inline <svg> elements. When a block parser captures

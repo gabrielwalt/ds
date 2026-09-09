@@ -1,0 +1,145 @@
+/* Block: cards-promo — eyebrow-labelled promo cards over the Shop hero.
+ * Source: dentsplysirona.com/en-us/shop .promocards.cmp-shop--promocards.
+ *
+ * Each card is authored as its OWN cards-promo block (one instance). EDS
+ * renders them as sibling .cards-promo-wrapper divs inside the
+ * .section.cards-promo-container; the 3-across row is built at SECTION level,
+ * the card surface + typography on the block internals. */
+
+/* ---- Section-level row across the sibling card blocks ----
+ * On the Shop page the hero-home block and the three cards-promo blocks share
+ * ONE EDS section. So the flex row is built here but the hero wrapper is forced
+ * to span full width (its own row) while the promo cards form the row beneath —
+ * matching the source, where the promo cards overlap the hero's lower edge. */
+main .section.cards-promo-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--grid-gap);
+  padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
+}
+
+/* Hero shares the section but must NOT be a flex card — full-width own row. */
+main .section.cards-promo-container > .hero-home-wrapper {
+  flex: 1 1 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+main .section.cards-promo-container > .cards-promo-wrapper {
+  display: flex;
+  flex: 1 1 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (width >= 600px) {
+  main .section.cards-promo-container > .cards-promo-wrapper {
+    flex: 1 1 calc(33.333% - var(--grid-gap));
+    max-width: calc(33.333% - var(--grid-gap));
+  }
+}
+
+/* ---- The card ---- */
+.cards-promo .cards-promo-card {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  border: 1px solid var(--card-border-light);
+  border-radius: var(--radius-card);
+  background-color: var(--background-color);
+  box-shadow: var(--shadow-card);
+  padding: var(--card-padding);
+  text-align: center;
+}
+
+.cards-promo .cards-promo-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Eyebrow label */
+.cards-promo .cards-promo-label {
+  margin: 0 0 12px;
+  font-family: var(--body-font-family);
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-letter-spacing);
+  text-transform: uppercase;
+  color: var(--label-color);
+}
+
+/* Title */
+.cards-promo .cards-promo-body h5,
+.cards-promo .cards-promo-body h6 {
+  margin: 0;
+  font-family: var(--heading-font-family);
+  font-weight: var(--heading-weight);
+  font-size: var(--heading-size-s);
+  line-height: 1.2;
+  letter-spacing: var(--heading-letter-spacing);
+  color: var(--text-color);
+}
+
+/* Image sits between the title block and the CTA */
+.cards-promo .cards-promo-image {
+  width: 100%;
+  margin: 20px 0;
+  line-height: 0;
+}
+
+.cards-promo .cards-promo-image picture,
+.cards-promo .cards-promo-image img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 160px;
+  object-fit: contain;
+}
+
+/* CTA pill — pinned to the card bottom so CTAs align across cards */
+.cards-promo .cards-promo-cta-wrap {
+  margin-top: auto;
+  width: 100%;
+}
+
+.cards-promo .cards-promo-cta:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 24px;
+  border: 1px solid var(--brand-blue);
+  border-radius: var(--radius-pill);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  color: var(--brand-blue);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cards-promo .cards-promo-cta:any-link::after {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: var(--icon-arrow-right) center / contain no-repeat;
+  transition: transform 0.2s ease;
+}
+
+.cards-promo .cards-promo-cta:hover {
+  background-color: var(--brand-blue);
+  color: var(--section-light-text);
+}
+
+.cards-promo .cards-promo-cta:hover::after {
+  transform: translateX(3px);
+}

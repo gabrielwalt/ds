@@ -55,12 +55,24 @@ function decorateLinks(footer) {
       return;
     }
 
-    // External links → trailing external-link glyph.
+    // External links → trailing external-link glyph. The link is left as inline
+    // (so a long label like "Privacy & Security Trust Center" wraps naturally
+    // across lines); the icon is glued to the LAST word via a nowrap span so it
+    // never orphans onto its own line or drifts to the wrap point.
     try {
       const { hostname } = new URL(href, 'https://www.dentsplysirona.com');
       if (hostname && hostname !== PRIMARY_HOST) {
-        a.classList.add('footer-link-icon', 'footer-link-external');
-        a.insertAdjacentHTML('beforeend', iconSvg('ExternalLink', 14));
+        a.classList.add('footer-link-external');
+        const text = a.textContent.replace(/\s+$/, '');
+        const lastSpace = text.lastIndexOf(' ');
+        const head = lastSpace >= 0 ? text.slice(0, lastSpace + 1) : '';
+        const lastWord = lastSpace >= 0 ? text.slice(lastSpace + 1) : text;
+        a.textContent = head;
+        const tail = document.createElement('span');
+        tail.className = 'footer-link-external-tail';
+        tail.textContent = lastWord;
+        tail.insertAdjacentHTML('beforeend', iconSvg('ExternalLink', 14));
+        a.append(tail);
       }
     } catch (e) {
       /* relative or malformed href — leave as-is */

@@ -27,22 +27,24 @@ main .section.cards-feature-container {
   padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
 }
 
-/* Section heading / trailing CTA run full width above/below the grid.
-   Heading is LEFT-aligned (only teaser cards + card items are centered on this
-   page); heading→cards gap uses the unified --section-heading-gap token. */
+/* Section heading / trailing CTA run full width above/below the grid and are
+   LEFT-aligned (only teaser cards + card items are centered on this page). The
+   base title↔cards↔CTA gap is set globally; this is a flex grid with its own
+   row-gap, so subtract one grid-gap increment on each side to keep the
+   effective gap equal to every other section. */
 main .section.cards-feature-container > .default-content-wrapper {
   flex: 1 1 100%;
   max-width: none;
-  margin: 0 0 var(--section-heading-gap);
   padding: 0;
   text-align: left;
 }
 
-/* Trailing CTA wrapper (e.g. the "Visit support" pill after the §9 cards):
-   push it further down below the card grid and drop the heading-gap it would
-   otherwise carry as a bottom margin. */
-main .section.cards-feature-container > .default-content-wrapper:last-child {
-  margin: var(--section-heading-gap) 0 0;
+main .section.cards-feature-container > .default-content-wrapper:first-child {
+  margin-bottom: calc(var(--section-heading-gap) - var(--grid-gap));
+}
+
+main .section.cards-feature-container > .default-content-wrapper:last-child:not(:first-child) {
+  margin-top: calc(var(--section-heading-gap) - var(--grid-gap));
 }
 
 /* Each authored card block becomes one grid cell. It is a flex column so its
@@ -117,10 +119,9 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
   padding: var(--card-padding);
 }
 
-/* Teaser variant — image-led cards (§3): white surface, centered.
-   Reduced bottom padding (source cards are near-square ~424x428, not tall). */
+/* Teaser variant — image-led cards (§3): white surface, centered. Uses the
+   design-system --card-padding on all sides (the 12px bottom looked cramped). */
 .cards-feature > ul > li:has(.cards-feature-card-image) {
-  padding-bottom: 12px;
   align-items: center;
   border: 1px solid var(--card-border-light);
   border-radius: var(--radius-card);
@@ -138,7 +139,6 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
   background-color: rgb(246 246 246); /* source §9 light-grey tile */
   box-shadow: none;
   text-align: left;
-  padding-bottom: 16px; /* tighter bottom padding (source cards aren't tall) */
 }
 
 /* Icon / illustration */
@@ -193,7 +193,7 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
 
 .cards-feature .cards-feature-card-body h5,
 .cards-feature .cards-feature-card-body h6 {
-  margin: 0 0 16px; /* source heading→body gap is 16px */
+  margin: 0 0 var(--card-title-gap); /* design-system title→description gap */
   font-family: var(--heading-font-family);
   font-weight: var(--heading-weight);
   color: var(--text-color);
@@ -213,45 +213,28 @@ main .section.cards-feature-container > .cards-feature-wrapper > .cards-feature 
 }
 
 .cards-feature .cards-feature-card-body p {
-  margin: 0 0 8px;
+  margin: 0; /* rhythm comes from the title gap above + the CTA gap below */
   font-family: var(--body-font-family);
   font-size: var(--body-size);
-  font-weight: 400;
+  font-weight: 300; /* light description text (design-system default) */
   line-height: var(--body-line-height);
   color: var(--text-muted);
   text-align: inherit;
 }
 
-/* Teaser (image-led §3) cards: tighter title→description gap to make the card
-   near-square like the source (was 16px). */
-.cards-feature > ul > li:has(.cards-feature-card-image) .cards-feature-card-body h5,
-.cards-feature > ul > li:has(.cards-feature-card-image) .cards-feature-card-body h6 {
-  margin-bottom: 8px;
-}
-
-/* Icon-led cards (§5/§7/§9): tighten the title→description gap too. */
-.cards-feature > ul > li:not(:has(.cards-feature-card-image)) .cards-feature-card-body h5,
-.cards-feature > ul > li:not(:has(.cards-feature-card-image)) .cards-feature-card-body h6 {
-  margin-bottom: 8px;
-}
-
-.cards-feature > ul > li:not(:has(.cards-feature-card-image)) .cards-feature-card-body p {
-  margin-top: 0;
-  font-weight: 300; /* slightly lighter description text */
-}
-
-/* "Learn more" link — sits just below the description (not pinned to the card
-   bottom, which left too big a gap after short descriptions). */
+/* CTA paragraph ("Learn more" link) — sits a --card-cta-gap below the
+   description. Scoped to a last paragraph that actually wraps a LINK, so a
+   plain description that happens to be the last child doesn't inherit the CTA
+   gap (which had inflated the title→description gap on card-less-CTA cards). */
 /* stylelint-disable-next-line no-descending-specificity */
-.cards-feature .cards-feature-card-body p:last-child {
-  margin: 16px 0 0;
+.cards-feature .cards-feature-card-body p:last-child:has(a) {
+  margin: var(--card-cta-gap) 0 0;
 }
 
 .cards-feature .cards-feature-card-body a:any-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 16px; /* close to the description text */
   font-size: var(--cta-font-size);
   font-weight: 600;
   color: var(--brand-blue);
@@ -296,13 +279,6 @@ main .section.cards-feature-container:not(.dark, .blue, .grey-soft)
   transform: translateX(3px);
 }
 
-/* CTA paragraph sits just below the description (not pushed to the bottom). */
-/* stylelint-disable-next-line no-descending-specificity */
-.cards-feature .cards-feature-card-body > p:last-child:has(> a:only-child) {
-  margin-top: 16px;
-  padding-top: 0;
-}
-
 /* ---- Dark / blue section variant ----
  * On `.section.dark` (§5 goals) and `.section.blue` (§7 advantage banner) the
  * source icon-cards are solid TILES (not transparent): the dark section uses a
@@ -335,9 +311,8 @@ main .section.dark .cards-feature .cards-feature-card-body p, main .section.blue
 }
 
 /* On the dark goals section the source renders the CTA in the chartreuse
-   accent. Keep the same 16px gap from the body copy as the light cards. */
+   accent (the description→CTA gap is handled by the shared p:last-child rule). */
 main .section.dark .cards-feature .cards-feature-card-body a:any-link {
-  margin-top: 16px;
   color: var(--brand-chartreuse);
 }
 

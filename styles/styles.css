@@ -336,6 +336,21 @@ main > .section > div:last-child > :last-child {
   margin-bottom: 0;
 }
 
+/* ---- Overarching section rhythm (title ↔ cards ↔ CTA) ----
+ * Every content section is authored as: a leading .default-content-wrapper
+ * (the title/intro), the card/content blocks, and an optional trailing
+ * .default-content-wrapper (a CTA like "Explore Academy" / "Visit support").
+ * These two rules set the SAME vertical gap around the cards for every section
+ * from one place, so individual blocks don't each redefine it. A block can
+ * still override locally when it genuinely needs a different rhythm. */
+main > .section > .default-content-wrapper:first-child {
+  margin: 0 0 var(--section-heading-gap);
+}
+
+main > .section > .default-content-wrapper:last-child:not(:first-child) {
+  margin: var(--section-heading-gap) 0 0;
+}
+
 main > .section > div {
   max-width: var(--content-max-width);
   margin: auto;
@@ -414,6 +429,7 @@ main .section.blue a:any-link {
 
 /* On the blue advantage banner the section heading + subtitle stay LEFT-aligned
    (only teasers/card items are centered on this page). */
+/* stylelint-disable-next-line no-descending-specificity */
 main .section.blue > .default-content-wrapper {
   text-align: left;
 }

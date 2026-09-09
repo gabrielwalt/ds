@@ -18,12 +18,14 @@ main .section.cards-overlay-container {
   padding-inline: max(24px, calc((100% - var(--content-max-width)) / 2));
 }
 
-/* Heading spans the full grid width. Source gap heading->grid is 60px;
- * the 24px grid gap plus 36px bottom margin yields that spacing. */
+/* Heading spans the full grid width. The heading→cards gap is set globally
+   (--section-heading-gap in styles.css); this grid also has its own row-gap,
+   so cancel that one duplicated increment by pulling the following row up by
+   the grid gap — keeping the effective title→cards gap equal to other sections. */
 main .section.cards-overlay-container > .default-content-wrapper {
   grid-column: 1 / -1;
   max-width: none;
-  margin: 0 0 36px;
+  margin-bottom: calc(var(--section-heading-gap) - var(--grid-gap));
   padding: 0;
 }
 

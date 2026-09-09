@@ -35,14 +35,14 @@ main .section.cards-quote-container {
   padding-inline: max(24px, calc((100% - 1296px) / 2));
 }
 
-/* Section heading runs full width above the card row.
- * Source keeps ~60px between the heading baseline and the card row; the h3's
- * own 12px bottom margin + the 24px section row-gap give 36px, so add 24px
- * more here to reach the source's 60px. */
+/* Section heading runs full width above the card row. The title→cards gap is
+   set globally (--section-heading-gap); this flex container also has a row-gap,
+   so subtract one grid-gap increment here to keep the effective gap equal to
+   every other section. */
 main .section.cards-quote-container > .default-content-wrapper {
   flex: 1 1 100%;
   max-width: none;
-  margin: 0 0 24px;
+  margin-bottom: calc(var(--section-heading-gap) - var(--grid-gap));
   padding: 0;
 }
 

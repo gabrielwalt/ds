@@ -22,6 +22,15 @@
   background-color: var(--section-dark-bg); /* source block bg: rgb(51 63 76) */
 }
 
+/* Phone: the promo carousel below is pulled up ~110px to overlap this hero. Add
+   enough bottom padding so the hero text clears the overlapping cards instead
+   of colliding with them (the cards sit ~110px into the hero + a ~24px gap). */
+@media (width < 600px) {
+  .hero-home {
+    padding-bottom: 148px;
+  }
+}
+
 /* Row 1 = background image (position it as a full-cover backdrop). */
 .hero-home > div:first-child {
   position: absolute;

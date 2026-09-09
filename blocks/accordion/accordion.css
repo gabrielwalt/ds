@@ -1,0 +1,83 @@
+/*
+ * Block: accordion — FAQ list (source: dentsplysirona.com support "Quick
+ * answers to common questions"). Clean rows separated by hairlines, a bold
+ * question, and a chevron that rotates open. Uses global brand tokens.
+ */
+
+.accordion {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+}
+
+.accordion .accordion-item {
+  border-bottom: 1px solid var(--card-border-light);
+}
+
+.accordion .accordion-item:first-child {
+  border-top: 1px solid var(--card-border-light);
+}
+
+/* Question row (native <summary>) */
+.accordion .accordion-item-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  color: var(--text-color);
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-size-xs); /* 23px — matches source question size */
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+  cursor: pointer;
+  list-style: none;
+}
+
+/* remove the default disclosure triangle */
+.accordion .accordion-item-title::-webkit-details-marker {
+  display: none;
+}
+
+/* chevron (reuses the brand arrow glyph, rotated to point down; up when open) */
+.accordion .accordion-item-title::after {
+  content: '';
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background-color: var(--brand-blue);
+  mask: var(--icon-arrow-right) center / contain no-repeat;
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+}
+
+.accordion .accordion-item[open] .accordion-item-title::after {
+  transform: rotate(-90deg);
+}
+
+/* Answer body */
+.accordion .accordion-item-body {
+  padding: 0 0 20px;
+  color: var(--text-muted);
+  font-family: var(--body-font-family);
+  font-size: var(--body-size);
+  font-weight: 400;
+  line-height: var(--body-line-height);
+}
+
+.accordion .accordion-item-body :first-child {
+  margin-top: 0;
+}
+
+.accordion .accordion-item-body :last-child {
+  margin-bottom: 0;
+}
+
+.accordion .accordion-item-body a:any-link {
+  color: var(--brand-blue);
+  text-decoration: none;
+}
+
+.accordion .accordion-item-body a:hover {
+  text-decoration: underline;
+}

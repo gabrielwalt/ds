@@ -31,12 +31,16 @@ export default function parse(element, { document }) {
     '.cmp-teaser__text .cmp-text, .cmp-teaser__text, .cmp-text',
   );
 
-  // Optional call-to-action link(s).
+  // Optional call-to-action link(s). Skip CTAs inside a hidden (`.d-none`
+  // bootstrap utility → display:none) container: some teasers ship a second,
+  // author-hidden secondary action (e.g. Explore's Primescan banner hides a
+  // "Learn more" → one-ds.html), which the source never renders. Capturing it
+  // produced a duplicate visible "Learn more" link in the imported card.
   const ctaLinks = Array.from(
     element.querySelectorAll(
       '.cmp-teaser__action-link, .cmp-teaser__cta a, .cmp-button, a.cmp-teaser__action-link',
     ),
-  );
+  ).filter((a) => !a.closest('.d-none'));
 
   // Empty-block guard: bail if there is no usable content.
   if (!heading && !description && !image) {

@@ -1,0 +1,28 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/support.html",
+  "path": "en-us/support",
+  "timestamp": "2026-09-09T03:04:21.149Z",
+  "title": "Customer Support: FAQ's",
+  "template": "toplevel",
+  "blocks": [
+    "hero-home",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-overlay",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "accordion",
+    "accordion"
+  ]
+}

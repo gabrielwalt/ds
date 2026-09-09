@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "url": "https://www.dentsplysirona.com/en-us/shop.html",
+  "path": "en-us/shop",
+  "timestamp": "2026-09-09T03:29:04.102Z",
+  "title": "Shop dental products and supplies here",
+  "template": "shop",
+  "blocks": [
+    "hero-home",
+    "cards-promo",
+    "cards-promo",
+    "cards-promo",
+    "cards-category",
+    "cards-category",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature"
+  ]
+}

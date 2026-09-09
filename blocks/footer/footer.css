@@ -73,8 +73,24 @@ footer .footer a {
   text-decoration: none;
 }
 
-footer .footer a:hover,
-footer .footer a:focus-visible {
+/* Column link items use a smaller font than the headings (source: 14px). */
+footer .footer .section:first-child li,
+footer .footer .section:first-child li a {
+  font-size: 14px;
+}
+
+/* Accent items are authored with <em> in the fragment. footer.js unwraps them
+   and adds .footer-link-accent, but as a fallback (e.g. if the DA round-trip
+   leaves the <em> in place) render any footer <em> as the orange accent —
+   never italic. */
+footer .footer em {
+  color: var(--footer-accent);
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+footer .footer a:hover, footer .footer a:focus-visible {
   color: var(--footer-heading);
   text-decoration: underline;
 }
@@ -87,7 +103,7 @@ footer .footer .section:first-child {
   padding-bottom: 40px;
 }
 
-/* ---- Inline glyphs on links (external link, phone) ---- */
+/* ---- Inline glyphs on links (phone) ---- */
 footer .footer a.footer-link-icon {
   display: inline-flex;
   align-items: center;
@@ -99,8 +115,20 @@ footer .footer .footer-icon {
   fill: currentcolor;
 }
 
-/* the external-link glyph trails the label a touch smaller + slightly muted */
-footer .footer a.footer-link-external .footer-icon-externallink {
+/* External links stay inline so a long label wraps naturally; the icon is
+   glued to the last word (nowrap) so it never orphans onto its own line. */
+footer .footer a.footer-link-external {
+  display: inline;
+}
+
+footer .footer .footer-link-external-tail {
+  white-space: nowrap;
+}
+
+footer .footer .footer-link-external-tail .footer-icon {
+  display: inline;
+  margin-left: 6px;
+  vertical-align: -1px;
   opacity: 0.8;
 }
 
@@ -117,12 +145,16 @@ footer .footer a.footer-link-accent:focus-visible {
   text-decoration: underline;
 }
 
-/* ---- Section 2: locale + social (divider above) ---- */
+/* ---- Section 2: locale + social (divider above) ----
+   Symmetric top/bottom padding so the region + social items sit centered
+   between this row's top divider and the legal row's divider below (previously
+   only had top padding, which pushed them down against the lower line). */
 footer .footer .section:nth-child(2) .default-content-wrapper {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding-top: 28px;
+  padding-bottom: 28px;
   border-top: 1px solid var(--footer-divider);
 }
 
@@ -187,6 +219,7 @@ footer .footer .section:nth-child(3) p:last-child {
 }
 
 /* Legal links are the least-bright text in the footer (source: muted slate) */
+/* stylelint-disable-next-line no-descending-specificity */
 footer .footer .section:nth-child(3) a {
   position: relative;
   color: var(--footer-muted);

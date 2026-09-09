@@ -69,6 +69,10 @@ var CustomImportScript = (() => {
     const heading = element.querySelector(
       ".cmp-hero__title .cmp-maintitle__text, .cmp-maintitle__text, .cmp-hero__title h1, h1, h2"
     );
+    if (heading) {
+      const text = heading.textContent.replace(/\s+/g, " ").trim();
+      if (text) heading.textContent = text;
+    }
     const subheading = element.querySelector(
       ".cmp-hero__subheading .cmp-text, .cmp-hero__subheading, .cmp-text"
     );
@@ -87,7 +91,7 @@ var CustomImportScript = (() => {
       return strong;
     });
     const cells = [];
-    if (bgImage) cells.push([bgImage]);
+    cells.push([bgImage || ""]);
     const contentCell = [];
     if (heading) contentCell.push(heading);
     if (subheading) contentCell.push(subheading);
@@ -103,6 +107,9 @@ var CustomImportScript = (() => {
   // tools/importer/parsers/carousel-promo.js
   function parse2(element, { document: document2 }) {
     let slides = Array.from(element.querySelectorAll(":scope .swiper-slide"));
+    if (!slides.length) {
+      slides = Array.from(element.querySelectorAll(":scope .cmp-carousel__item"));
+    }
     if (!slides.length) {
       slides = Array.from(
         element.querySelectorAll(".promocards, .course-card, .cmp-teaser")
@@ -811,6 +818,7 @@ var CustomImportScript = (() => {
       });
       flushSectionMetadata();
       [...rebuilt.querySelectorAll("h1, h2, h3, h4, h5, h6")].forEach((h) => {
+        if (h.parentElement !== rebuilt) return;
         let sib = h.nextElementSibling;
         let hasContent = false;
         while (sib && sib.tagName !== "HR") {

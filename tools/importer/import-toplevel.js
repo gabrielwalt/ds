@@ -476,6 +476,10 @@ export default {
     // those so no empty labelled section is emitted. Headings that DO own
     // content (a following block/paragraph before the next <hr>) are kept.
     [...rebuilt.querySelectorAll('h1, h2, h3, h4, h5, h6')].forEach((h) => {
+      // Only consider TOP-LEVEL section headings (direct children of `rebuilt`).
+      // A heading nested inside a block table (e.g. the hero title) must never
+      // be treated as an orphan — doing so deleted the title of no-image heroes.
+      if (h.parentElement !== rebuilt) return;
       let sib = h.nextElementSibling;
       // skip the <hr> that immediately follows a heading only if it's the
       // section separator BEFORE the next heading; here we look for real content
